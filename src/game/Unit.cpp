@@ -365,7 +365,7 @@ bool Unit::haveOffhandWeapon() const
         return false;
 }
 
-void Unit::SendMonsterMove(float NewPosX, float NewPosY, float NewPosZ, SplineType type, SplineFlags flags, uint32 Time, Player* player)
+void Unit::SendMonsterMove(float NewPosX, float NewPosY, float NewPosZ, SplineType type, SplineFlags flags, uint32 Time, Player* player, float trajecParam)
 {
     float moveTime = (float)Time;
 
@@ -402,6 +402,11 @@ void Unit::SendMonsterMove(float NewPosX, float NewPosY, float NewPosZ, SplineTy
         moveTime *= 1.05f;
 
     data << uint32(moveTime);                               // Time in between points
+    if(flags & SPLINEFLAG_TRAJECTORY)
+    {
+        data << trajecParam;                                // Determines height of trajectory movement
+        data << int32(0);                                   // unknown, apparently always 0
+    }
     data << uint32(1);                                      // 1 single waypoint
     data << NewPosX << NewPosY << NewPosZ;                  // the single waypoint Point B
 
@@ -13380,7 +13385,12 @@ void Unit::KnockBackFrom(Unit* target, float horizontalSpeed, float verticalSpee
     }
     else
     {
-        float dis = horizontalSpeed;
+        // sample data suggests gravity in WoW is approximately 9.64 u/s^2, exact value unknown
+        // real vertical speed apparently half of spell value
+        // assume zero height difference in start and landing point for travel time calculation and distance
+        static const float gravity = 9.64f;
+        float travelTime = verticalSpeed / gravity;
+        float dis = horizontalSpeed * travelTime;
 
         float ox, oy, oz;
         GetPosition(ox, oy, oz);
@@ -13401,7 +13411,9 @@ void Unit::KnockBackFrom(Unit* target, float horizontalSpeed, float verticalSpee
 
         //FIXME: this mostly hack, must exist some packet for proper creature move at client side
         //       with CreatureRelocation at server side
-        NearTeleportTo(fx, fy, fz, GetOrientation(), this == target);
+        //NearTeleportTo(fx, fy, fz, GetOrientation(), this == target);
+sLog.outDetail("KnockBackFrom(): distance: %f, time: %fsec", dis, travelTime);
+        GetMotionMaster()->MoveKnockBack(fx, fy, fz, gravity, uint32(travelTime*IN_MILISECONDS));
     }
 }
 

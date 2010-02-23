@@ -117,6 +117,7 @@ class MANGOS_DLL_SPEC MotionMaster : private std::stack<MovementGenerator *>
         void MoveSeekAssistanceDistract(uint32 timer);
         void MoveTaxiFlight(uint32 path, uint32 pathnode);
         void MoveDistract(uint32 time);
+        void MoveKnockBack(float x, float y, float z, float trajectParam, uint32 time);
 
         MovementGeneratorType GetCurrentMovementGeneratorType() const;
 

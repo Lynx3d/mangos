@@ -259,6 +259,8 @@ libmangosgame_a_SOURCES = \
 	Totem.cpp \
 	Totem.h \
 	TradeHandler.cpp \
+	TrajectoryMovementGenerator.h \
+	TrajectoryMovementGenerator.cpp \
 	Transports.cpp \
 	Transports.h \
 	ThreatManager.cpp \

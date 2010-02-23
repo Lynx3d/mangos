@@ -27,6 +27,7 @@
 #include "IdleMovementGenerator.h"
 #include "PointMovementGenerator.h"
 #include "TargetedMovementGenerator.h"
+#include "TrajectoryMovementGenerator.h"
 #include "WaypointMovementGenerator.h"
 
 #include <cassert>
@@ -414,6 +415,24 @@ MotionMaster::MoveDistract(uint32 timer)
     }
 
     DistractMovementGenerator* mgen = new DistractMovementGenerator(timer);
+    Mutate(mgen);
+}
+
+void
+MotionMaster::MoveKnockBack(float x, float y, float z, float trajectParam, uint32 time)
+{
+    if(i_owner->GetTypeId()==TYPEID_PLAYER)
+    {
+        sLog.outError("MoveKnockBack is only suitable for creatures. Attempt to use  for Player (GUID: %u)", i_owner->GetGUIDLow());
+        return;
+    }
+    else
+    {
+        DEBUG_LOG("Creature (Entry: %u GUID: %u) knocked back",
+            i_owner->GetEntry(), i_owner->GetGUIDLow());
+    }
+
+    TrajectoryMovementGenerator<Creature>* mgen = new TrajectoryMovementGenerator<Creature>(x, y, z, trajectParam, time);
     Mutate(mgen);
 }
 
