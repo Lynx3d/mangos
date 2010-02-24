@@ -433,6 +433,7 @@ enum UnitState
     UNIT_STAT_FOLLOW_MOVE     = 0x00008000,
     UNIT_STAT_FLEEING         = 0x00010000,                     // FleeMovementGenerator/TimedFleeingMovementGenerator active/onstack
     UNIT_STAT_FLEEING_MOVE    = 0x00020000,
+    UNIT_STAT_TRAJECTORY      = 0x00040000,                     // TrajectoryMovementGenerator, creature leaping or knocked back
 
     // masks (only for check)
 
@@ -450,12 +451,12 @@ enum UnitState
 
     // not react at move in sight or other
     UNIT_STAT_CAN_NOT_REACT   = UNIT_STAT_STUNNED | UNIT_STAT_DIED |
-                                UNIT_STAT_CONFUSED | UNIT_STAT_FLEEING,
+                                UNIT_STAT_CONFUSED | UNIT_STAT_FLEEING | UNIT_STAT_TRAJECTORY,
 
     // masks (for check or reset)
 
     // for real move using movegen check and stop (except unstoppable flight)
-    UNIT_STAT_MOVING          = UNIT_STAT_ROAMING_MOVE | UNIT_STAT_CHASE_MOVE | UNIT_STAT_FOLLOW_MOVE | UNIT_STAT_FLEEING_MOVE,
+    UNIT_STAT_MOVING          = UNIT_STAT_ROAMING_MOVE | UNIT_STAT_CHASE_MOVE | UNIT_STAT_FOLLOW_MOVE | UNIT_STAT_FLEEING_MOVE | UNIT_STAT_TRAJECTORY,
 
     UNIT_STAT_ALL_STATE       = 0xFFFFFFFF
 };

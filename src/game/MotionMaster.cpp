@@ -432,7 +432,7 @@ MotionMaster::MoveKnockBack(float x, float y, float z, float trajectParam, uint3
             i_owner->GetEntry(), i_owner->GetGUIDLow());
     }
 
-    TrajectoryMovementGenerator<Creature>* mgen = new TrajectoryMovementGenerator<Creature>(x, y, z, trajectParam, time);
+    TrajectoryMovementGenerator* mgen = new TrajectoryMovementGenerator(x, y, z, trajectParam, time);
     Mutate(mgen);
 }
 

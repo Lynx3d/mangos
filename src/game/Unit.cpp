@@ -13409,9 +13409,6 @@ void Unit::KnockBackFrom(Unit* target, float horizontalSpeed, float verticalSpee
 
         UpdateGroundPositionZ(fx, fy, fz);
 
-        //FIXME: this mostly hack, must exist some packet for proper creature move at client side
-        //       with CreatureRelocation at server side
-        //NearTeleportTo(fx, fy, fz, GetOrientation(), this == target);
 sLog.outDetail("KnockBackFrom(): distance: %f, time: %fsec", dis, travelTime);
         GetMotionMaster()->MoveKnockBack(fx, fy, fz, gravity, uint32(travelTime*IN_MILISECONDS));
     }

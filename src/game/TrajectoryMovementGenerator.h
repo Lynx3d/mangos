@@ -21,9 +21,8 @@
 
 #include "MovementGenerator.h"
 
-template<class T>
 class MANGOS_DLL_SPEC TrajectoryMovementGenerator
-: public MovementGeneratorMedium< T, TrajectoryMovementGenerator<T> >
+: public MovementGeneratorMedium< Creature, TrajectoryMovementGenerator >
 {
     public:
         TrajectoryMovementGenerator(float x, float y, float z, float gravity, uint32 duration) :
@@ -31,13 +30,13 @@ class MANGOS_DLL_SPEC TrajectoryMovementGenerator
         {
         }
 
-        void Initialize(T &);
-        void Finalize(T &);
-        void Interrupt(T &);
-        void Reset(T &);
-        bool Update(T &, const uint32 &);
+        void Initialize(Creature &);
+        void Finalize(Creature &);
+        void Interrupt(Creature &);
+        void Reset(Creature &);
+        bool Update(Creature &, const uint32 &);
 
-        MovementGeneratorType GetMovementGeneratorType() { return FLEEING_MOTION_TYPE; }
+        MovementGeneratorType GetMovementGeneratorType() { return TRAJECTORY_MOTION_TYPE; }
     private:
         float i_x0;
         float i_y0;

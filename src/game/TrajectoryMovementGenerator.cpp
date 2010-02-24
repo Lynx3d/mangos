@@ -21,9 +21,8 @@
 #include "MapManager.h"
 #include "TrajectoryMovementGenerator.h"
 
-template<>
 void
-TrajectoryMovementGenerator<Creature>::Initialize(Creature &owner)
+TrajectoryMovementGenerator::Initialize(Creature &owner)
 {
     owner.GetPosition(i_x0, i_y0, i_z0);
     // do some math; note that time==0 is at destination not start, time is counted down,
@@ -32,32 +31,32 @@ TrajectoryMovementGenerator<Creature>::Initialize(Creature &owner)
     i_xspeed = (i_x0 - i_x1) / fTime;
     i_yspeed = (i_y0 - i_y1) / fTime;
     i_zspeed1 = 0.5f * i_gravity * fTime + (i_z0 - i_z1) / fTime;
-    owner.addUnitState(UNIT_STAT_FLEEING|UNIT_STAT_FLEEING_MOVE);
+    owner.addUnitState(UNIT_STAT_TRAJECTORY);
 sLog.outDetail("TrajectoryMovementGenerator<Creature>::Initialize(): knockbackTime: %u, gravity:%f", i_totalFlightTime.GetExpiry(), i_gravity);
 sLog.outDetail("\tfinal speed: %f, p0: %f, %f, %f  p1: %f, %f, %f", i_zspeed1, i_x0, i_y0, i_z0, i_x1, i_y1, i_z1);
     owner.SendMonsterMove(i_x1, i_y1, i_z1, SPLINETYPE_NORMAL, SplineFlags(SPLINEFLAG_WALKMODE|SPLINEFLAG_TRAJECTORY|SPLINEFLAG_KNOCKBACK),
                           i_totalFlightTime.GetExpiry(), NULL, 2.f * i_gravity);
 }
 
-template<class T>
-void TrajectoryMovementGenerator<T>::Interrupt(T &owner)
+void TrajectoryMovementGenerator::Interrupt(Creature &owner)
 {
-    // you cannot really interrupt knockback movement...except *maybe* by root, but i doubt
+    // TODO: analyze situations where other movements would be applied on top of trajectory
+    // only charge and *maybe* root effects should be able to interrupt knockback movement...
 
-    // flee state still applied while movegen disabled
-    owner.clearUnitState(UNIT_STAT_FLEEING_MOVE);
+    owner.clearUnitState(UNIT_STAT_TRAJECTORY);
 }
 
-template<class T>
-void TrajectoryMovementGenerator<T>::Reset(T &owner)
+void TrajectoryMovementGenerator::Reset(Creature &owner)
 {
+    // TODO: analyze situations where Reset will be called, and how to react
+    // trajectory parameters become invalid once movement interrupted. Possibly set timer to zero?
+
     Initialize(owner);
 }
 
-template<>
-void TrajectoryMovementGenerator<Creature>::Finalize(Creature &owner)
+void TrajectoryMovementGenerator::Finalize(Creature &owner)
 {
-    owner.clearUnitState(UNIT_STAT_FLEEING|UNIT_STAT_FLEEING_MOVE);
+    owner.clearUnitState(UNIT_STAT_TRAJECTORY);
     if (Unit* victim = owner.getVictim())
     {
         if (owner.isAlive())
@@ -68,12 +67,11 @@ void TrajectoryMovementGenerator<Creature>::Finalize(Creature &owner)
     }
 }
 
-template<class T>
-bool TrajectoryMovementGenerator<T>::Update(T & owner, const uint32 & time_diff)
+bool TrajectoryMovementGenerator::Update(Creature &owner, const uint32 &time_diff)
 {
-    // do mobs continue to fly when dead?
-    if( !owner.isAlive() )
-        return false;
+    // do mobs continue to fly/fall when dead?
+    /* if( !owner.isAlive() )
+        return false; */
 
     i_totalFlightTime.Update(time_diff);
     if (i_totalFlightTime.Passed())
@@ -89,7 +87,3 @@ sLog.outDetail("Trajectory Update: Pos: %f, %f, %f", i_x1 + fTime*i_xspeed, i_y1
 
     return true;
 }
-
-template bool TrajectoryMovementGenerator<Creature>::Update(Creature & owner, const uint32 & time_diff);
-template void TrajectoryMovementGenerator<Creature>::Interrupt(Creature &owner);
-template void TrajectoryMovementGenerator<Creature>::Reset(Creature &owner);
