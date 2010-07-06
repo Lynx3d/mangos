@@ -39,4 +39,16 @@ namespace VMAP
     // defined in TileAssembler.cpp currently...
     bool readChunk(FILE *rf, char *dest, const char *compare, uint32 len);
 }
+
+#ifndef NO_CORE_FUNCS
+    #include "Errors.h"
+    #include "Log.h"
+    #define ERROR_LOG(...) sLog.outDebug(__VA_ARGS__);
+#else
+    #define ASSERT(x) do{} while(0)
+    #define DEBUG_LOG(...) do{} while(0)
+    #define ERROR_LOG(...) do{} while(0)
+    #define DETAIL_LOG(...) do{} while(0)
 #endif
+
+#endif // _VMAPDEFINITIONS_H
