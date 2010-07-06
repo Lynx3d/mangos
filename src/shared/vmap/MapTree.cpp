@@ -253,7 +253,11 @@ namespace VMAP
             if (!tf)
                 success = false;
             else
+            {
+                if (!readChunk(tf, chunk, VMAP_MAGIC, 8))
+                    success = false;
                 fclose(tf);
+            }
         }
         fclose(rf);
         return success;
@@ -351,8 +355,11 @@ namespace VMAP
         FILE* tf = fopen(tilefile.c_str(), "rb");
         if (tf)
         {
+            char chunk[8];
+            if (!readChunk(tf, chunk, VMAP_MAGIC, 8))
+                result = false;
             uint32 numSpawns;
-            if (fread(&numSpawns, sizeof(uint32), 1, tf) != 1)
+            if (result && fread(&numSpawns, sizeof(uint32), 1, tf) != 1)
                 result = false;
             for (uint32 i=0; i<numSpawns && result; ++i)
             {
@@ -420,6 +427,9 @@ namespace VMAP
             if (tf)
             {
                 bool result=true;
+                char chunk[8];
+                if (!readChunk(tf, chunk, VMAP_MAGIC, 8))
+                    result = false;
                 uint32 numSpawns;
                 if (fread(&numSpawns, sizeof(uint32), 1, tf) != 1)
                     result = false;

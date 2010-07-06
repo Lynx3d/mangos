@@ -158,6 +158,8 @@ namespace VMAP
                 StaticMapTree::unpackTileID(tile->first, x, y);
                 tilefilename << std::setw(2) << x << "_" << std::setw(2) << y << ".vmtile";
                 FILE *tilefile = fopen(tilefilename.str().c_str(), "wb");
+                // file header
+                if (success && fwrite(VMAP_MAGIC, 1, 8, tilefile) != 8) success = false;
                 // write number of tile spawns
                 if (success && fwrite(&nSpawns, sizeof(uint32), 1, tilefile) != 1) success = false;
                 // write tile spawns
