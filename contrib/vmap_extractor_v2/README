@@ -30,10 +30,7 @@ Windows:
 
 1. Building
 
-	First, you need to build the solution in dep\libmpq\win in the same
-	configuration you want to build the extractor (release or debug)
-
-	After that you can buid the solution in contrib\vmap_extractor_v2\win
+	Just buid the solution in contrib\vmap_extractor_v2\win
 	Resulting binaries will be in contrib\vmap_extractor_v2\bin\$(PlatformName)_$(ConfigurationName)
 
 2. Extracting
