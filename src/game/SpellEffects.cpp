@@ -4043,8 +4043,8 @@ void Spell::EffectDispel(SpellEffectIndex eff_idx)
         return;
 
     // Fill possible dispell list
-    std::list <std::pair<SpellAuraHolder* ,uint32>> dispel_list;
-    
+    std::list <std::pair<SpellAuraHolder* ,uint32> > dispel_list;
+
     // Create dispel mask by dispel type
     uint32 dispel_type = m_spellInfo->EffectMiscValue[eff_idx];
     uint32 dispelMask  = GetDispellMask( DispelType(dispel_type) );
@@ -4084,7 +4084,7 @@ void Spell::EffectDispel(SpellEffectIndex eff_idx)
         for (int32 count=0; count < damage && !dispel_list.empty(); ++count)
         {
             // Random select buff for dispel
-            std::list<std::pair<SpellAuraHolder* ,uint32>>::iterator dispel_itr = dispel_list.begin();
+            std::list<std::pair<SpellAuraHolder* ,uint32> >::iterator dispel_itr = dispel_list.begin();
             std::advance(dispel_itr,urand(0, dispel_list.size()-1));
 
             SpellAuraHolder *holder = dispel_itr->first;
@@ -6266,7 +6266,7 @@ void Spell::EffectScriptEffect(SpellEffectIndex eff_idx)
                         holder->RefreshHolder();
 
                         Aura *aura = holder->GetAuraByEffectIndex(EFFECT_INDEX_0);
-                        
+
                         if (!aura)
                             continue;
 
@@ -7667,7 +7667,7 @@ void Spell::EffectStealBeneficialBuff(SpellEffectIndex eff_idx)
 
     if(!unitTarget || unitTarget==m_caster)                 // can't steal from self
         return;
-    
+
     std::vector <SpellAuraHolder *> steal_list;
     // Create dispel mask by dispel type
     uint32 dispelMask  = GetDispellMask( DispelType(m_spellInfo->EffectMiscValue[eff_idx]) );
