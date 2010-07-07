@@ -176,17 +176,18 @@ namespace VMAP
             x---------x---> dx
           0           1
         */
+        const uint32 rowOffset = iTilesX + 1;
         if (dx > dy) // case (a)
         {
-            float sx = iHeight[tx+1 + ty*(iTilesX+1)]     - iHeight[tx + ty*(iTilesX+1)];
-            float sy = iHeight[tx+1 + (ty+1)*(iTilesX+1)] - iHeight[tx+1 + ty*(iTilesX+1)];
-            liqHeight = iHeight[tx + ty*(iTilesX+1)] + dx * sx + dy * sy;
+            float sx = iHeight[tx+1 +  ty    * rowOffset] - iHeight[tx   + ty * rowOffset];
+            float sy = iHeight[tx+1 + (ty+1) * rowOffset] - iHeight[tx+1 + ty * rowOffset];
+            liqHeight = iHeight[tx + ty * rowOffset] + dx * sx + dy * sy;
         }
         else // case (b)
         {
-            float sx = iHeight[tx+1 + (ty+1)*(iTilesX+1)] - iHeight[tx + (ty+1)*(iTilesX+1)];
-            float sy = iHeight[tx + (ty+1)*(iTilesX+1)] - iHeight[tx + ty*(iTilesX+1)];
-            liqHeight = iHeight[tx + ty*(iTilesX+1)] + dx * sx + dy * sy;
+            float sx = iHeight[tx+1 + (ty+1) * rowOffset] - iHeight[tx + (ty+1) * rowOffset];
+            float sy = iHeight[tx   + (ty+1) * rowOffset] - iHeight[tx +  ty    * rowOffset];
+            liqHeight = iHeight[tx + ty * rowOffset] + dx * sx + dy * sy;
         }
         return true;
     }
