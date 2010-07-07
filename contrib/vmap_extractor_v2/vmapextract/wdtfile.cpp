@@ -1,5 +1,3 @@
-#define __STORMLIB_SELF__
-
 #include "vmapexport.h"
 #include "wdtfile.h"
 #include "adtfile.h"

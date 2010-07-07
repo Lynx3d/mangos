@@ -1,13 +1,9 @@
 #ifndef DBCFILE_H
 #define DBCFILE_H
-#define __STORMLIB_SELF__
 
 #include <cassert>
 #include <string>
-//#include "StormLib.h"
 
-#undef min
-#undef max
 class DBCFile
 {
 public:

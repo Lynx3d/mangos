@@ -1,16 +1,3 @@
-/*****************************************************************************/
-/* StormLibTest.cpp                       Copyright (c) Ladislav Zezula 2003 */
-/*---------------------------------------------------------------------------*/
-/* This module uses very brutal test methods for StormLib. It extracts all   */
-/* files from the archive with Storm.dll and with stormlib and compares them,*/
-/* then tries to build a copy of the entire archive, then removes a few files*/
-/* from the archive and adds them back, then compares the two archives, ...  */
-/*---------------------------------------------------------------------------*/
-/*   Date    Ver   Who  Comment                                              */
-/* --------  ----  ---  -------                                              */
-/* 25.03.03  1.00  Lad  The first version of StormLibTest.cpp                */
-/*****************************************************************************/
-
 #define _CRT_SECURE_NO_DEPRECATE
 #include <cstdio>
 #include <iostream>
