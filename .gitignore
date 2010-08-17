@@ -48,6 +48,9 @@ stamp-h1
 Makefile.in
 Makefile
 
+# waf
+build
+
 #
 # Editors / debuggers / other output files
 #

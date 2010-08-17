@@ -1,0 +1,37 @@
+#! /usr/bin/env python
+
+bld.stlib(source = [
+		'Detour/DetourCommon.cpp',
+		'Detour/DetourNavMesh.cpp',
+		'Detour/DetourNavMeshBuilder.cpp',
+		'Detour/DetourNode.cpp'],
+	includes = 'Detour',
+	target = 'detour')
+
+bld.stlib(source = [
+		'Recast/Recast.cpp',
+		'Recast/RecastArea.cpp',
+		'Recast/RecastContour.cpp',
+		'Recast/RecastFilter.cpp',
+		'Recast/RecastLog.cpp',
+		'Recast/RecastMesh.cpp',
+		'Recast/RecastMeshDetail.cpp',
+		'Recast/RecastRasterization.cpp',
+		'Recast/RecastRegion.cpp',
+		'Recast/RecastTimer.cpp'],
+	includes = 'Recast',
+	target = 'recast')
+
+if bld.env.HAVE_SDL:
+	bld.stlib(source = [
+			'DebugUtils/DebugDraw.cpp',
+			'DebugUtils/DetourDebugDraw.cpp',
+			'DebugUtils/RecastDebugDraw.cpp',
+			'DebugUtils/RecastDump.cpp'],
+		includes = [
+			'DebugUtils',
+			'..',
+			'../../../contrib/mmap/src',
+			'../../../contrib/mmap/src/Debug'],
+		target = 'pathfinddebug')
+

@@ -1,0 +1,29 @@
+#! /usr/bin/env python
+
+
+
+mangosvmaps_src = [
+	'BIH.cpp',
+	'MapTree.cpp',
+	'ModelInstance.cpp',
+	'TileAssembler.cpp',
+	'VMapFactory.cpp',
+	'VMapManager2.cpp',
+	'WorldModel.cpp' ]
+
+mangosvmaps_inc = ['.', '..',
+	'../../framework',
+	'../../../dep/include',
+	'../../../dep/include/g3dlite',
+	'../../../dep/ACE_wrappers' ]
+
+bld.stlib(
+	source = mangosvmaps_src,
+	includes = mangosvmaps_inc,
+	target = 'mangosvmaps')
+
+bld.stlib(
+	source = mangosvmaps_src,
+	includes = mangosvmaps_inc,
+	defines = bld.env.CONTRIB_DEFINES,
+	target = 'mangosvmaps_ext')

@@ -1,0 +1,61 @@
+#! /usr/bin/env python
+
+def build_helper(bld):
+	generator_src = [
+		'src/generator.cpp',
+		'src/MapBuilder.cpp',
+		'src/TileBuilder.cpp',
+		'src/VMapExtensions.cpp',
+		'src/ChunkyTriMesh.cpp',
+		'src/DebugAlloc.cpp' ]
+
+	generator_inc = [
+		'src',
+		'../../src/shared/vmap',
+		'../../dep/include/g3dlite',
+		'../../src/framework',
+		'../../dep/ACE_wrappers',
+		'../../src/shared' ]
+
+	bld.program(
+		source = generator_src,
+		includes = generator_inc,
+		target = 'generator',
+		use = ['mangosvmaps', 'g3dlite', 'recast', 'detour', 'ZLIB'])
+
+build_helper(bld)
+
+if bld.env.HAVE_SDL:
+	bld.program(source = [
+			"src/Debug/Debug.cpp",
+			"src/ChunkyTriMesh.cpp",
+			"src/InputGeom.cpp",
+			"src/MeshLoaderObj.cpp",
+			"src/Debug/ConvexVolumeTool.cpp",
+			"src/Debug/Filelist.cpp",
+			"src/Debug/imgui.cpp",
+			"src/Debug/imguiRenderGL.cpp",
+			"src/Debug/main.cpp",
+			"src/Debug/NavMeshTesterTool.cpp",
+			"src/Debug/OffMeshConnectionTool.cpp",
+			"src/Debug/Sample.cpp",
+			"src/Debug/Sample_Debug.cpp",
+			"src/Debug/Sample_SoloMeshSimple.cpp",
+			"src/Debug/Sample_SoloMeshTiled.cpp",
+			"src/Debug/Sample_TileMesh.cpp",
+			"src/Debug/SlideShow.cpp",
+			"src/Debug/TestCase.cpp"],
+		includes = [
+			'src',
+			'src/Debug',
+			'/usr/include/SDL',
+			'../../src/shared/vmap',
+			'../../dep/include/g3dlite',
+			'../../src/framework',
+			'../../dep/ACE_wrappers',
+			'../../src/shared' ],
+		target = 'recast_demo',
+		lib = ['GL','GLU'],
+		use = ['mangosvmaps', 'g3dlite', 'pathfinddebug', 'recast', 'detour', 'SDL', 'ZLIB'])
+
+

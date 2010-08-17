@@ -1,0 +1,43 @@
+#! /usr/bin/env python
+# encoding: utf-8
+
+# the following two variables are used by the target "waf dist"
+VERSION='0.17'
+APPNAME='MaNGOS'
+
+top = '.'
+out = 'build'
+
+def options(opt):
+        opt.tool_options('compiler_cxx')
+        opt.add_option('-d', '--debug', dest='debug', default=True, help='enable debug info (-g)')
+        
+def configure(conf):
+	conf.check_tool('compiler_cxx')
+	conf.env.append_value('CXXFLAGS', ['-O2'])
+	if conf.options.debug:
+		conf.env.append_unique('CXXFLAGS', ['-g'])
+	conf.env.append_value('CONTRIB_DEFINES', ['MMAP_GENERATOR','NO_CORE_FUNCS'])
+	conf.check_cc(lib = 'z', uselib_store='ZLIB', mandatory = True)
+	# mmaps
+	conf.check_cfg(atleast_pkgconfig_version='0.0.0')
+	try:
+		conf.check_cfg(package='sdl', args='--libs')
+		conf.env['HAVE_SDL'] = True
+	except:
+		conf.env['HAVE_SDL'] = False
+
+def build(bld):
+	# build genrevision tool first
+	bld.program(source = 'src/tools/genrevision/genrevision.cpp', target = 'genrevision')
+	bld.add_group()
+	
+	# generate revision.h
+#	tg = bld.get_tgen_by_name('genrevision')
+	bld(rule = '${bld.bldnode.abspath()}/genrevision ${bld.srcnode.abspath()}', target = 'revision.h')
+	bld.recurse('dep/src/g3dlite')
+	bld.recurse('src/shared/vmap')
+	# mmaps
+	# bld.recurse('src/shared/pathfinding')
+	# bld.recurse('contrib/mmap')
+
