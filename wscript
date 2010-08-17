@@ -19,6 +19,8 @@ def configure(conf):
 		conf.env.append_unique('CXXFLAGS', ['-g'])
 	conf.env.append_value('CONTRIB_DEFINES', ['MMAP_GENERATOR','NO_CORE_FUNCS'])
 	conf.check_cc(lib = 'z', uselib_store='ZLIB', mandatory = True)
+	# TODO: detect ACE
+	conf.env.append_value('INCLUDES', '../../../dep/ACE_wrappers')
 	# mmaps
 	conf.check_cfg(atleast_pkgconfig_version='0.0.0')
 	try:
@@ -28,13 +30,14 @@ def configure(conf):
 		conf.env['HAVE_SDL'] = False
 
 def build(bld):
-	# build genrevision tool first
+	# build genrevision tool first (used by src/shared/wscript_build)
 	bld.program(source = 'src/tools/genrevision/genrevision.cpp', target = 'genrevision')
 	bld.add_group()
 	
 	# generate revision.h
-#	tg = bld.get_tgen_by_name('genrevision')
+	#tg = bld.get_tgen_by_name('genrevision')
 	bld(rule = '${bld.bldnode.abspath()}/genrevision ${bld.srcnode.abspath()}', target = 'revision.h')
+	bld.recurse('src/shared')
 	bld.recurse('dep/src/g3dlite')
 	bld.recurse('src/shared/vmap')
 	# mmaps

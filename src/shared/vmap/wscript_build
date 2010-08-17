@@ -14,8 +14,7 @@ mangosvmaps_src = [
 mangosvmaps_inc = ['.', '..',
 	'../../framework',
 	'../../../dep/include',
-	'../../../dep/include/g3dlite',
-	'../../../dep/ACE_wrappers' ]
+	'../../../dep/include/g3dlite' ]
 
 bld.stlib(
 	source = mangosvmaps_src,
