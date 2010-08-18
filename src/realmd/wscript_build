@@ -1,0 +1,30 @@
+#! /usr/bin/env python
+
+## Build realm list daemon as standalone program
+
+mangos_realmd_src = [
+	'AuthSocket.cpp',
+	'BufferedSocket.cpp',
+	'Main.cpp',
+	'PatchHandler.cpp',
+	'RealmList.cpp']
+
+mangos_realmd_lib = [
+	'mangosdatabase',
+	'mangosconfig',
+	'mangosauth',
+	'mangosshared',
+	'mangosframework',
+	'LIBSSL']
+
+mangos_realmd_inc = [
+	'../..',
+	'../shared',
+	'../framework',
+	'../../dep/include' ]
+
+bld.program(source = mangos_realmd_src,
+	includes = mangos_realmd_inc,
+	use = mangos_realmd_lib,
+	target = 'mangos_realmd')
+

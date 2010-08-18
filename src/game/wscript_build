@@ -158,6 +158,7 @@ mangosgame_inc = [
 bld.stlib(source = mangosgame_src,
 	includes = mangosgame_inc,
 	use = ['MYSQL'],
+	install_path = None,
 	target = 'mangosgame')
 
 bld.add_manual_dependency(

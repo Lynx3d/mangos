@@ -14,6 +14,7 @@ libmangosshared_inc = ['.', '../..', '../framework', '../../dep/include', '../..
 lib = bld.stlib(source = libmangosshared_src,
 	includes = libmangosshared_inc,
 	use = ['ACE'],
+	install_path = None,
 	target = 'mangosshared')
 
 # explicitly make mangosshared lib depend on revision.h created from genrevision

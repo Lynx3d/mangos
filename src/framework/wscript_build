@@ -10,5 +10,6 @@ mangosframework_src = [
 
 bld.stlib(source = mangosframework_src,
 	includes = ['.'],
+	install_path = None,
 	target = 'mangosframework')
 

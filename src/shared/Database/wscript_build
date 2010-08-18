@@ -21,5 +21,6 @@ mangosdb_inc = ['..', '../../../', '../../framework', '../../../dep/include', '.
 bld.stlib(source = mangosdb_src,
 	includes = mangosdb_inc,
 	use = 'MYSQL',
+	install_path = None,
 	target = 'mangosdatabase')
 

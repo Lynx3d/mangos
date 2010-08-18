@@ -46,7 +46,7 @@ def configure(conf):
 
 def build(bld):
 	# build genrevision tool first (used by src/shared/wscript_build)
-	bld.program(source = 'src/tools/genrevision/genrevision.cpp', target = 'genrevision')
+	bld.program(source = 'src/tools/genrevision/genrevision.cpp', target = 'genrevision', install_path = None)
 	bld.add_group()
 
 	# generate revision.h
@@ -55,6 +55,7 @@ def build(bld):
 	bld.recurse('src/shared')
 	bld.recurse('src/framework')
 	bld.recurse('src/game')
+	bld.recurse('src/realmd')
 	bld.recurse('src/mangosd')
 	bld.recurse('dep/src/g3dlite')
 	bld.recurse('dep/src/gsoap')

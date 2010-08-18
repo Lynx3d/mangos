@@ -18,11 +18,13 @@ mangosvmaps_inc = ['.', '..',
 bld.stlib(
 	source = mangosvmaps_src,
 	includes = mangosvmaps_inc,
+	install_path = None,
 	target = 'mangosvmaps')
 
 bld.stlib(
 	source = mangosvmaps_src,
 	includes = mangosvmaps_inc,
 	defines = bld.env.CONTRIB_DEFINES,
+	install_path = None,
 	target = 'mangosvmaps_ext')
 

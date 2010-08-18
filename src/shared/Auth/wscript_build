@@ -16,5 +16,6 @@ mangosauth_inc = ['..', '../../..', '../../framework', '../../../dep/include', '
 
 bld.stlib(source = mangosauth_src,
 	includes = mangosauth_inc,
+	install_path = None,
 	target = 'mangosauth')
 
