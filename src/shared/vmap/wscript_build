@@ -10,6 +10,7 @@ mangosvmaps_src = [
 	'WorldModel.cpp' ]
 
 mangosvmaps_inc = ['.', '..',
+	'../../../',
 	'../../framework',
 	'../../../dep/include',
 	'../../../dep/include/g3dlite' ]

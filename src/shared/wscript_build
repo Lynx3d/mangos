@@ -9,10 +9,11 @@ libmangosshared_src = [
 	'Util.cpp',
 	'Config/Config.cpp']
 
-libmangosshared_inc = ['.', '../framework', '../../dep/include', '../../dep/include/g3dlite']
+libmangosshared_inc = ['.', '../..', '../framework', '../../dep/include', '../../dep/include/g3dlite']
 	
 lib = bld.stlib(source = libmangosshared_src,
 	includes = libmangosshared_inc,
+	use = ['ACE'],
 	target = 'mangosshared')
 
 # explicitly make mangosshared lib depend on revision.h created from genrevision

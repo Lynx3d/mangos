@@ -1,0 +1,4 @@
+#! /usr/bin/env python
+
+bld.stlib(source = 'stdsoap2.cpp', target = 'gsoap', includes = ['../../../', '../../include/gsoap'])
+

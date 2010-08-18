@@ -16,7 +16,7 @@ mangosdb_src = [
 	'SqlDelayThread.cpp',
 	'SqlOperations.cpp' ]
 	
-mangosdb_inc = ['..', '../../framework', '../../../dep/include', '../../../dep/include/g3dlite']
+mangosdb_inc = ['..', '../../../', '../../framework', '../../../dep/include', '../../../dep/include/g3dlite']
 
 bld.stlib(source = mangosdb_src,
 	includes = mangosdb_inc,

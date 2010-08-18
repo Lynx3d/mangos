@@ -12,7 +12,7 @@ mangosauth_src = [
 	'Sha1.cpp',
 	'md5.c' ]
 	
-mangosauth_inc = ['..', '../../framework', '../../../dep/include', '../../../dep/include/g3dlite']
+mangosauth_inc = ['..', '../../..', '../../framework', '../../../dep/include', '../../../dep/include/g3dlite']
 
 bld.stlib(source = mangosauth_src,
 	includes = mangosauth_inc,

@@ -1,0 +1,45 @@
+#! /usr/bin/env python
+
+## Build world daemon as standalone program
+
+mangosworldd_src = [
+	'CliRunnable.cpp',
+	'Main.cpp',
+	'Master.cpp',
+	'RASocket.cpp',
+	'MaNGOSsoap.cpp',
+	'WorldRunnable.cpp',
+	'soapC.cpp',
+	'soapServer.cpp' ]
+
+mangosworldd_lib = [
+#	'mangosscript',
+	'mangosgame',
+	'mangosdatabase',
+	'mangosconfig',
+	'mangosauth',
+	'mangosshared',
+	'mangosvmaps',
+	'mangosframework',
+	'g3dlite',
+	'gsoap',
+	'ACE',
+	'MYSQL',
+	'LIBSSL' ]
+	
+mangosworldd_inc = [
+	'../..',
+	'../shared',
+	'../framework',
+	'../game',
+	'../../dep/include',
+	'../../dep/include/gsoap' ]
+
+bld.program(source = mangosworldd_src,
+	includes = mangosworldd_inc,
+	use = mangosworldd_lib,
+	target = 'mangos-worldd')
+
+#bld.add_manual_dependency(
+#	'mangos-worldd',
+#	bld.path.find_node('revision.h'))
