@@ -1,0 +1,14 @@
+#! /usr/bin/env python
+
+## Build MaNGOS framework library as convenience library.
+#  libMaNGOSScript shared library will later be reused by world server daemon.
+
+mangosframework_src = [
+	'Policies/MemoryManagement.cpp',
+	'Policies/ObjectLifeTime.cpp',
+	'Utilities/EventProcessor.cpp']
+
+bld.stlib(source = mangosframework_src,
+	includes = ['.'],
+	target = 'mangosframework')
+

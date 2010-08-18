@@ -17,6 +17,7 @@ def configure(conf):
 	conf.check_tool('compiler_c')
 	conf.check_tool('compiler_cxx')
 	conf.env.append_value('CXXFLAGS', ['-O2'])
+	conf.env.append_value('INCLUDES', '.')
 	if conf.options.debug:
 		conf.env.append_unique('CXXFLAGS', ['-g'])
 	conf.env.append_value('CONTRIB_DEFINES', ['MMAP_GENERATOR','NO_CORE_FUNCS'])
@@ -41,6 +42,8 @@ def build(bld):
 	#tg = bld.get_tgen_by_name('genrevision')
 	bld(rule = '${bld.bldnode.abspath()}/genrevision ${bld.srcnode.abspath()}', target = 'revision.h')
 	bld.recurse('src/shared')
+	bld.recurse('src/framework')
+	bld.recurse('src/game')
 	bld.recurse('dep/src/g3dlite')
 	# mmaps
 	# bld.recurse('src/shared/pathfinding')
