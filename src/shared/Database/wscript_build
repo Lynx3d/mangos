@@ -1,0 +1,25 @@
+#! /usr/bin/env python
+
+## Build MaNGOS shared library and its parts as convenience library.
+#  All libraries will be convenience libraries. Might be changed to shared
+#  later.
+
+mangosdb_src = [
+	'DBCFileLoader.cpp',
+	'Database.cpp',
+	'DatabaseMysql.cpp',
+	'DatabasePostgre.cpp',
+	'Field.cpp',
+	'QueryResultMysql.cpp',
+	'QueryResultPostgre.cpp',
+	'SQLStorage.cpp',
+	'SqlDelayThread.cpp',
+	'SqlOperations.cpp' ]
+	
+mangosdb_inc = ['..', '../../framework', '../../../dep/include', '../../../dep/include/g3dlite']
+
+bld.stlib(source = mangosdb_src,
+	includes = mangosdb_inc,
+	use = 'MYSQL',
+	target = 'mangosdatabase')
+

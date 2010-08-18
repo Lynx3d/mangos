@@ -6,7 +6,8 @@ libmangosshared_src = [
 	'MemoryLeaks.cpp',
 	'ProgressBar.cpp',
 	'Threading.cpp',
-	'Util.cpp']
+	'Util.cpp',
+	'Config/Config.cpp']
 
 libmangosshared_inc = ['.', '../framework', '../../dep/include', '../../dep/include/g3dlite']
 	
@@ -14,8 +15,10 @@ lib = bld.stlib(source = libmangosshared_src,
 	includes = libmangosshared_inc,
 	target = 'mangosshared')
 
-print(type(lib))
 # explicitly make mangosshared lib depend on revision.h created from genrevision
 bld.add_manual_dependency(
 	'mangosshared',
 	bld.path.find_node('revision.h'))
+
+bld.recurse(['Auth', 'Database', 'vmap'])
+

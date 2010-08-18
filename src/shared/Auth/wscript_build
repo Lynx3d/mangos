@@ -1,0 +1,20 @@
+#! /usr/bin/env python
+
+## Build MaNGOS shared library and its parts as convenience library.
+#  All libraries will be convenience libraries. Might be changed to shared
+#  later.
+
+mangosauth_src = [
+	'AuthCrypt.cpp',
+	'BigNumber.cpp',
+	'HMACSHA1.cpp',
+	'SARC4.cpp',
+	'Sha1.cpp',
+	'md5.c' ]
+	
+mangosauth_inc = ['..', '../../framework', '../../../dep/include', '../../../dep/include/g3dlite']
+
+bld.stlib(source = mangosauth_src,
+	includes = mangosauth_inc,
+	target = 'mangosauth')
+

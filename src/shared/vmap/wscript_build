@@ -1,7 +1,5 @@
 #! /usr/bin/env python
 
-
-
 mangosvmaps_src = [
 	'BIH.cpp',
 	'MapTree.cpp',
@@ -26,3 +24,4 @@ bld.stlib(
 	includes = mangosvmaps_inc,
 	defines = bld.env.CONTRIB_DEFINES,
 	target = 'mangosvmaps_ext')
+
