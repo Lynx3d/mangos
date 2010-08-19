@@ -26,5 +26,8 @@ mangos_realmd_inc = [
 bld.program(source = mangos_realmd_src,
 	includes = mangos_realmd_inc,
 	use = mangos_realmd_lib,
-	target = 'mangos_realmd')
+	install_path = '${PREFIX}/mangos/bin',
+	target = 'mangos-realmd')
+
+bld.install_as('${PREFIX}/mangos/etc/realmd.conf.dist', 'realmd.conf.dist.in')
 

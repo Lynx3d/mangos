@@ -1,6 +1,8 @@
 #! /usr/bin/env python
 # encoding: utf-8
 
+import Utils
+
 # the following two variables are used by the target "waf dist"
 VERSION='0.17'
 APPNAME='MaNGOS'
@@ -27,8 +29,9 @@ def configure(conf):
 	conf.check_cfg(package='libssl', args='--cflags --libs')
 	# TODO: detect ACE
 	conf.check_cfg(package='ACE', args='--cflags --libs')
-	# disables inclusion of ace/Stack_Trace.h
-	conf.env.append_value('DEFINES', 'HAVE_CONFIG_H')
+	# *nix specific defines
+	conf.env.append_value('DEFINES', ['HAVE_CONFIG_H',
+									  Utils.subst_vars('SYSCONFDIR="${PREFIX}/mangos/etc/"', conf.env)])
 	# TODO: enable TBB
 	conf.env.append_value('DEFINES', 'USE_STANDARD_MALLOC')
 	#conf.env.append_value('INCLUDES', '../../../dep/ACE_wrappers')
@@ -52,6 +55,7 @@ def build(bld):
 	# generate revision.h
 	#tg = bld.get_tgen_by_name('genrevision')
 	bld(rule = '${bld.bldnode.abspath()}/genrevision ${bld.srcnode.abspath()}', target = 'revision.h')
+	bld.recurse('src/bindings/universal')
 	bld.recurse('src/shared')
 	bld.recurse('src/framework')
 	bld.recurse('src/game')
@@ -62,4 +66,9 @@ def build(bld):
 	# mmaps
 	# bld.recurse('src/shared/pathfinding')
 	# bld.recurse('contrib/mmap')
+
+	# install SQL updates
+	start_dir = bld.path.find_dir('sql/updates')
+	bld.install_files('${PREFIX}/mangos/dat/mangos/sql/updates', start_dir.ant_glob('*.sql'),
+		relative_trick=False)
 

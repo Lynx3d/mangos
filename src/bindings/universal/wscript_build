@@ -1,0 +1,19 @@
+#! /usr/bin/env python
+
+## Build MaNGOS script library as shared library.
+#  libmangosscript shared library will later be reused by world server daemon.
+
+mangosscript_src = [
+	'ScriptMgr.cpp',
+	'system.cpp',
+	'Scripts/sc_default.cpp',
+	'Scripts/sc_defines.cpp']
+
+mangosscript_inc = ['.', 'Script', '../../../dep/include', '../../shared', '../../framework']
+
+bld.shlib(source = mangosscript_src,
+	includes = mangosscript_inc,
+	use = ['MYSQL'],
+	install_path = '${PREFIX}/mangos/lib',
+	target = 'mangosscript')
+
