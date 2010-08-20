@@ -29,7 +29,8 @@ mangos_worldd_lib = [
 	'gsoap',
 	'ACE',
 	'MYSQL',
-	'LIBSSL' ]
+	'LIBSSL',
+	'TBB' ]
 	
 mangos_worldd_inc = [
 	'../..',

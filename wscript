@@ -14,6 +14,8 @@ def options(opt):
 	opt.tool_options('compiler_c')
 	opt.tool_options('compiler_cxx')
 	opt.add_option('-d', '--debug', dest='debug', default=True, help='enable debug info (-g)')
+	opt.add_option('--with-std-malloc', dest='std_malloc', default=False, action='store_true',
+		help='use standard malloc instead of TBB')
 
 def configure(conf):
 	conf.check_tool('compiler_c')
@@ -25,19 +27,25 @@ def configure(conf):
 		conf.env.append_unique('CXXFLAGS', ['-g'])
 	conf.env.append_value('CONTRIB_DEFINES', ['MMAP_GENERATOR','NO_CORE_FUNCS'])
 	conf.check_cc(lib = 'z', uselib_store='ZLIB', mandatory = True)
+	conf.check_cfg(atleast_pkgconfig_version='0.0.0')
 	# detect SSL
 	conf.check_cfg(package='libssl', args='--cflags --libs')
-	# TODO: detect ACE
+	# detect ACE
+	# TODO: build ACE from source if not available
 	conf.check_cfg(package='ACE', args='--cflags --libs')
-	# *nix specific defines
-	conf.env.append_value('DEFINES', ['HAVE_CONFIG_H',
-									  Utils.subst_vars('SYSCONFDIR="${PREFIX}/mangos/etc/"', conf.env)])
-	# TODO: enable TBB
-	conf.env.append_value('DEFINES', 'USE_STANDARD_MALLOC')
 	#conf.env.append_value('INCLUDES', '../../../dep/ACE_wrappers')
+	# detect TBB (unless disabled)
+	if conf.options.std_malloc:
+		conf.env.append_value('DEFINES', 'USE_STANDARD_MALLOC')
+	else:
+		# TODO: build TBB from source if not available
+		conf.check_cfg(package='tbb', args='--cflags --libs')
+		conf.env.append_unique('LIB_TBB', ['tbbmalloc'])
+	# detect MySQL with mysql_config
 	conf.check_cfg(path='mysql_config', msg='Checking for mysql', package='', uselib_store='MYSQL', args='--include --libs_r')
+	# *nix specific defines
+	conf.env.append_value('DEFINES', ['HAVE_CONFIG_H', Utils.subst_vars('SYSCONFDIR="${PREFIX}/mangos/etc/"', conf.env)])
 	# mmaps
-	conf.check_cfg(atleast_pkgconfig_version='0.0.0')
 	try:
 		conf.check_cfg(package='sdl', args='--libs')
 		conf.env['HAVE_SDL'] = True
