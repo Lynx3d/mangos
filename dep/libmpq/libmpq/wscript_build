@@ -1,0 +1,13 @@
+#! /usr/bin/env python
+# encoding: utf-8
+
+bld.stlib(source = [
+	'common.c',
+	'huffman.c',
+	'extract.c',
+	'explode.c',
+	'mpq.c',
+	'wave.c' ],
+	includes = ['.', '..'],
+	env = bld.env_of_name('mpq'),
+	target = 'mpq')

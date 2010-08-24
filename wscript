@@ -20,7 +20,7 @@ def options(opt):
 def configure(conf):
 	conf.check_tool('compiler_c')
 	conf.check_tool('compiler_cxx')
-	
+
 	conf.env.append_value('CXXFLAGS', ['-O2'])
 	conf.env.append_value('INCLUDES', '.')
 	if conf.options.debug:
@@ -51,9 +51,10 @@ def configure(conf):
 		conf.env['HAVE_SDL'] = True
 	except:
 		conf.env['HAVE_SDL'] = False
-	
+
 	conf.check(header_name='ace/Stack_Trace.h', compile_mode='cxx', define_name='HAVE_ACE_STACK_TRACE_H', mandatory=False)
 	conf.write_config_header('config.h')
+	conf.recurse('dep/libmpq')
 
 def build(bld):
 	# build genrevision tool first (used by src/shared/wscript_build)
@@ -62,7 +63,7 @@ def build(bld):
 
 	# generate revision.h
 	#tg = bld.get_tgen_by_name('genrevision')
-	bld(rule = '${bld.bldnode.abspath()}/genrevision ${bld.srcnode.abspath()}', target = 'revision.h')
+	bld(rule = '${bld.bldnode.abspath()}/genrevision -o ${TGT} ${bld.srcnode.abspath()}', target = 'src/shared/revision.h')
 	bld.recurse('src/bindings/universal')
 	bld.recurse('src/shared')
 	bld.recurse('src/framework')
@@ -71,6 +72,7 @@ def build(bld):
 	bld.recurse('src/mangosd')
 	bld.recurse('dep/src/g3dlite')
 	bld.recurse('dep/src/gsoap')
+	bld.recurse('dep/libmpq/libmpq')
 	# mmaps
 	# bld.recurse('src/shared/pathfinding')
 	# bld.recurse('contrib/mmap')
