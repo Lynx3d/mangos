@@ -16,15 +16,19 @@ def options(opt):
 	opt.add_option('-d', '--debug', dest='debug', default=True, help='enable debug info (-g)')
 	opt.add_option('--with-std-malloc', dest='std_malloc', default=False, action='store_true',
 		help='use standard malloc instead of TBB')
+	opt.add_option('--with-tools', dest='with_tools', default=False, action='store_true',
+		help='build additional tools in contrib')
 
 def configure(conf):
 	conf.check_tool('compiler_c')
 	conf.check_tool('compiler_cxx')
+	conf.check_tool('pch', tooldir='.')
 
 	conf.env.append_value('CXXFLAGS', ['-O2'])
-	conf.env.append_value('INCLUDES', '.')
+	#conf.env.append_value('INCLUDES', '.')
 	if conf.options.debug:
 		conf.env.append_unique('CXXFLAGS', ['-g'])
+	conf.env['WITH_TOOLS'] = conf.options.with_tools
 	conf.env.append_value('CONTRIB_DEFINES', ['MMAP_GENERATOR','NO_CORE_FUNCS'])
 	conf.check_cc(lib = 'z', uselib_store='ZLIB', mandatory = True)
 	conf.check_cfg(atleast_pkgconfig_version='0.0.0')
@@ -65,6 +69,7 @@ def build(bld):
 	#tg = bld.get_tgen_by_name('genrevision')
 	bld(rule = '${bld.bldnode.abspath()}/genrevision -o ${TGT} ${bld.srcnode.abspath()}', target = 'src/shared/revision.h')
 	bld.recurse('src/bindings/universal')
+	#bld.recurse('src/bindings/ScriptDev2')
 	bld.recurse('src/shared')
 	bld.recurse('src/framework')
 	bld.recurse('src/game')
@@ -72,7 +77,8 @@ def build(bld):
 	bld.recurse('src/mangosd')
 	bld.recurse('dep/src/g3dlite')
 	bld.recurse('dep/src/gsoap')
-	bld.recurse('dep/libmpq/libmpq')
+	if bld.env.WITH_TOOLS:
+		bld.recurse('dep/libmpq/libmpq')
 	# mmaps
 	# bld.recurse('src/shared/pathfinding')
 	# bld.recurse('contrib/mmap')
