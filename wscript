@@ -37,6 +37,7 @@ def configure(conf):
 	# detect ACE
 	# TODO: build ACE from source if not available
 	conf.check_cfg(package='ACE', args='--cflags --libs')
+	conf.check(header_name='ace/Stack_Trace.h', compile_mode='cxx', define_name='HAVE_ACE_STACK_TRACE_H', mandatory=False)
 	#conf.env.append_value('INCLUDES', '../../../dep/ACE_wrappers')
 	# detect TBB (unless disabled)
 	if conf.options.std_malloc:
@@ -49,16 +50,15 @@ def configure(conf):
 	conf.check_cfg(path='mysql_config', msg='Checking for mysql', package='', uselib_store='MYSQL', args='--include --libs_r')
 	# *nix specific defines
 	conf.env.append_value('DEFINES', ['HAVE_CONFIG_H', Utils.subst_vars('SYSCONFDIR="${PREFIX}/mangos/etc/"', conf.env)])
-	# mmaps
-	try:
-		conf.check_cfg(package='sdl', args='--libs')
-		conf.env['HAVE_SDL'] = True
-	except:
-		conf.env['HAVE_SDL'] = False
 
-	conf.check(header_name='ace/Stack_Trace.h', compile_mode='cxx', define_name='HAVE_ACE_STACK_TRACE_H', mandatory=False)
+	# == tool setup ==
+	if conf.env['WITH_TOOLS']:
+		conf.check_cc(lib = 'bz2')
+		conf.recurse('dep/libmpq')
+		# mmaps, SDL for recast demo
+		conf.check_cfg(package='sdl', args='--cflags --libs', mandatory=False)
+
 	conf.write_config_header('config.h')
-	conf.recurse('dep/libmpq')
 
 def build(bld):
 	# build genrevision tool first (used by src/shared/wscript_build)
@@ -79,6 +79,8 @@ def build(bld):
 	bld.recurse('dep/src/gsoap')
 	if bld.env.WITH_TOOLS:
 		bld.recurse('dep/libmpq/libmpq')
+		bld.recurse('contrib/vmap_assembler')
+		bld.recurse('contrib/vmap_extractor_v3')
 	# mmaps
 	# bld.recurse('src/shared/pathfinding')
 	# bld.recurse('contrib/mmap')

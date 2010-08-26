@@ -1,0 +1,21 @@
+#! /usr/bin/env python
+
+vmap_extractor_src = [
+	'vmapextract/adtfile.cpp',
+	'vmapextract/dbcfile.cpp',
+	'vmapextract/model.cpp',
+	'vmapextract/mpq_libmpq.cpp',
+	'vmapextract/vmapexport.cpp',
+	'vmapextract/wdtfile.cpp',
+	'vmapextract/wmo.cpp']
+
+
+vmap_extractor_inc = [
+	'vmapextract']
+
+bld.program(
+	source = vmap_extractor_src,
+	includes = vmap_extractor_inc,
+	use = ['mpq', 'ZLIB', 'BZ2'],
+	install_path = None,
+	target = 'vmapextractor')

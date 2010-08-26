@@ -21,10 +21,11 @@ bld.stlib(
 	install_path = None,
 	target = 'mangosvmaps')
 
-bld.stlib(
-	source = mangosvmaps_src,
-	includes = mangosvmaps_inc,
-	defines = bld.env.CONTRIB_DEFINES,
-	install_path = None,
-	target = 'mangosvmaps_ext')
+if bld.env.WITH_TOOLS:
+	bld.stlib(
+		source = mangosvmaps_src,
+		includes = mangosvmaps_inc,
+		defines = bld.env.CONTRIB_DEFINES,
+		install_path = None,
+		target = 'mangosvmaps_ext')
 

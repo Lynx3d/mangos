@@ -1,0 +1,14 @@
+#! /usr/bin/env python
+
+vmap_assembler_inc = [
+	'../../src/shared',
+	'../../src/shared/vmap',
+	'../../dep/include/g3dlite',
+	'../../src/framework']
+
+bld.program(
+	source = 'vmap_assembler.cpp',
+	includes = vmap_assembler_inc,
+	use = ['mangosvmaps_ext', 'g3dlite', 'ZLIB'],
+	install_path = None,
+	target = 'vmap-assembler')
