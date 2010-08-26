@@ -1,0 +1,15 @@
+diff --git a/wscript b/wscript
+index 34097fe..635a645 100644
+--- a/wscript
++++ b/wscript
+@@ -68,8 +68,8 @@ def build(bld):
+ 	# generate revision.h
+ 	#tg = bld.get_tgen_by_name('genrevision')
+ 	bld(rule = '${bld.bldnode.abspath()}/genrevision -o ${TGT} ${bld.srcnode.abspath()}', target = 'src/shared/revision.h')
+-	bld.recurse('src/bindings/universal')
+-	#bld.recurse('src/bindings/ScriptDev2')
++	#bld.recurse('src/bindings/universal')
++	bld.recurse('src/bindings/ScriptDev2')
+ 	bld.recurse('src/shared')
+ 	bld.recurse('src/framework')
+ 	bld.recurse('src/game')
