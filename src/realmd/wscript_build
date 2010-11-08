@@ -15,7 +15,9 @@ mangos_realmd_lib = [
 	'mangosauth',
 	'mangosshared',
 	'mangosframework',
+	'PTHREAD',
 	'LIBSSL',
+	'LIBCRYPTO',
 	'TBB']
 
 mangos_realmd_inc = [

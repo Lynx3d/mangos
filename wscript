@@ -31,9 +31,12 @@ def configure(conf):
 	conf.env['WITH_TOOLS'] = conf.options.with_tools
 	conf.env.append_value('CONTRIB_DEFINES', ['MMAP_GENERATOR','NO_CORE_FUNCS'])
 	conf.check_cc(lib = 'z', uselib_store='ZLIB', mandatory = True)
+	conf.check_cc(lib = 'pthread', uselib_store='PTHREAD', mandatory = True)
 	conf.check_cfg(atleast_pkgconfig_version='0.0.0')
 	# detect SSL
 	conf.check_cfg(package='libssl', args='--cflags --libs')
+	# detect crypto (required by SSL...)
+	conf.check_cfg(package='libcrypto', args='--cflags --libs')
 	# detect ACE
 	# TODO: build ACE from source if not available
 	conf.check_cfg(package='ACE', args='--cflags --libs')

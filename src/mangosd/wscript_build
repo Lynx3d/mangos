@@ -27,11 +27,14 @@ mangos_worldd_lib = [
 	'mangosscript', # linking required because unload not safe...
 	'g3dlite',
 	'gsoap',
+	'PTHREAD',
 	'ACE',
 	'MYSQL',
 	'LIBSSL',
+	'LIBCRYPTO',
+	'ZLIB',
 	'TBB' ]
-	
+
 mangos_worldd_inc = [
 	'../..',
 	'../shared',
