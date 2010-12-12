@@ -84,7 +84,6 @@ mangosgame_src = [
 	'LootMgr.cpp',
 	'Mail.cpp',
 	'Map.cpp',
-	'MapInstanced.cpp',
 	'MapManager.cpp',
 	'MiscHandler.cpp',
 	'MotionMaster.cpp',
@@ -123,6 +122,7 @@ mangosgame_src = [
 	'SpellHandler.cpp',
 	'SocialMgr.cpp',
 	'SpellMgr.cpp',
+	'SQLStorages.cpp',
 	'StatSystem.cpp',
 	'TargetedMovementGenerator.cpp',
 	'TaxiHandler.cpp',
@@ -152,7 +152,7 @@ mangosgame_inc = [
 	'../../dep/include',
 	'../framework',
 	'../shared',
-	'../shared/vmap',
+	'./vmap',
 	'../realmd']
 
 bld.stlib(source = mangosgame_src,
@@ -164,4 +164,6 @@ bld.stlib(source = mangosgame_src,
 bld.add_manual_dependency(
 	'mangosgame',
 	bld.path.find_node('revision.h'))
+
+bld.recurse(['vmap'])
 

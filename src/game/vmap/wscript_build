@@ -12,6 +12,7 @@ mangosvmaps_src = [
 mangosvmaps_inc = ['.', '..',
 	'../../../',
 	'../../framework',
+	'../../shared',
 	'../../../dep/include',
 	'../../../dep/include/g3dlite' ]
 
