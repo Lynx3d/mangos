@@ -19,7 +19,7 @@
 #include "Common.h"
 #include "PlayerDump.h"
 #include "Database/DatabaseEnv.h"
-#include "Database/SQLStorage.h"
+#include "SQLStorages.h"
 #include "UpdateFields.h"
 #include "ObjectMgr.h"
 #include "AccountMgr.h"
@@ -423,7 +423,7 @@ DumpReturn PlayerDumpReader::LoadDump(const std::string& file, uint32 account, s
     bool incHighest = true;
     if (guid != 0 && guid < sObjectMgr.m_CharGuids.GetNextAfterMaxUsed())
     {
-        result = CharacterDatabase.PQuery("SELECT * FROM characters WHERE guid = '%d'", guid);
+        result = CharacterDatabase.PQuery("SELECT * FROM characters WHERE guid = '%u'", guid);
         if (result)
         {
             guid = sObjectMgr.m_CharGuids.GetNextAfterMaxUsed();

@@ -36,7 +36,8 @@
 #include "AchievementMgr.h"
 #include "ReputationMgr.h"
 #include "BattleGround.h"
-#include "DBCEnums.h"
+#include "DBCStores.h"
+#include "SharedDefines.h"
 
 #include<string>
 #include<vector>
@@ -499,7 +500,7 @@ enum PlayerFlags
     PLAYER_FLAGS_GM                = 0x00000008,
     PLAYER_FLAGS_GHOST             = 0x00000010,
     PLAYER_FLAGS_RESTING           = 0x00000020,
-    PLAYER_FLAGS_UNK7              = 0x00000040,
+    PLAYER_FLAGS_UNK7              = 0x00000040,            // admin?
     PLAYER_FLAGS_UNK8              = 0x00000080,            // pre-3.0.3 PLAYER_FLAGS_FFA_PVP flag for FFA PVP state
     PLAYER_FLAGS_CONTESTED_PVP     = 0x00000100,            // Player has been involved in a PvP combat and will be attacked by contested guards
     PLAYER_FLAGS_IN_PVP            = 0x00000200,
@@ -508,7 +509,7 @@ enum PlayerFlags
     PLAYER_FLAGS_PARTIAL_PLAY_TIME = 0x00001000,            // played long time
     PLAYER_FLAGS_NO_PLAY_TIME      = 0x00002000,            // played too long time
     PLAYER_FLAGS_IS_OUT_OF_BOUNDS  = 0x00004000,            // Lua_IsOutOfBounds
-    PLAYER_FLAGS_DEVELOPER         = 0x00008000,            // <Dev> prefix for something?
+    PLAYER_FLAGS_DEVELOPER         = 0x00008000,            // <Dev> chat tag, name prefix
     PLAYER_FLAGS_UNK17             = 0x00010000,            // pre-3.0.3 PLAYER_FLAGS_SANCTUARY flag for player entered sanctuary
     PLAYER_FLAGS_TAXI_BENCHMARK    = 0x00020000,            // taxi benchmark mode (on/off) (2.0.1)
     PLAYER_FLAGS_PVP_TIMER         = 0x00040000,            // 3.0.2, pvp timer active (after you disable pvp manually)
@@ -569,19 +570,20 @@ enum PlayerFlags
 #define KNOWN_TITLES_SIZE   3
 #define MAX_TITLE_INDEX     (KNOWN_TITLES_SIZE*64)          // 3 uint64 fields
 
-// used in PLAYER_FIELD_BYTES values
+// used in (PLAYER_FIELD_BYTES, 0) byte values
 enum PlayerFieldByteFlags
 {
-    PLAYER_FIELD_BYTE_TRACK_STEALTHED   = 0x00000002,
-    PLAYER_FIELD_BYTE_RELEASE_TIMER     = 0x00000008,       // Display time till auto release spirit
-    PLAYER_FIELD_BYTE_NO_RELEASE_WINDOW = 0x00000010        // Display no "release spirit" window at all
+    PLAYER_FIELD_BYTE_TRACK_STEALTHED   = 0x02,
+    PLAYER_FIELD_BYTE_RELEASE_TIMER     = 0x08,             // Display time till auto release spirit
+    PLAYER_FIELD_BYTE_NO_RELEASE_WINDOW = 0x10              // Display no "release spirit" window at all
 };
 
-// used in PLAYER_FIELD_BYTES2 values
+// used in byte (PLAYER_FIELD_BYTES2,3) values
 enum PlayerFieldByte2Flags
 {
-    PLAYER_FIELD_BYTE2_NONE              = 0x0000,
-    PLAYER_FIELD_BYTE2_INVISIBILITY_GLOW = 0x4000
+    PLAYER_FIELD_BYTE2_NONE              = 0x00,
+    PLAYER_FIELD_BYTE2_STEALTH           = 0x20,
+    PLAYER_FIELD_BYTE2_INVISIBILITY_GLOW = 0x40
 };
 
 enum ActivateTaxiReplies
@@ -801,22 +803,22 @@ enum TradeSlots
 
 enum TransferAbortReason
 {
-    TRANSFER_ABORT_NONE                     = 0x00,
-    TRANSFER_ABORT_ERROR                    = 0x01,
-    TRANSFER_ABORT_MAX_PLAYERS              = 0x02,         // Transfer Aborted: instance is full
-    TRANSFER_ABORT_NOT_FOUND                = 0x03,         // Transfer Aborted: instance not found
-    TRANSFER_ABORT_TOO_MANY_INSTANCES       = 0x04,         // You have entered too many instances recently.
-    TRANSFER_ABORT_ZONE_IN_COMBAT           = 0x06,         // Unable to zone in while an encounter is in progress.
-    TRANSFER_ABORT_INSUF_EXPAN_LVL          = 0x07,         // You must have <TBC,WotLK> expansion installed to access this area.
-    TRANSFER_ABORT_DIFFICULTY               = 0x08,         // <Normal,Heroic,Epic> difficulty mode is not available for %s.
-    TRANSFER_ABORT_UNIQUE_MESSAGE           = 0x09,         // Until you've escaped TLK's grasp, you cannot leave this place!
-    TRANSFER_ABORT_TOO_MANY_REALM_INSTANCES = 0x0A,         // Additional instances cannot be launched, please try again later.
-    TRANSFER_ABORT_NEED_GROUP               = 0x0B,         // 3.1
-    TRANSFER_ABORT_NOT_FOUND2               = 0x0C,         // 3.1
-    TRANSFER_ABORT_NOT_FOUND3               = 0x0D,         // 3.1
-    TRANSFER_ABORT_NOT_FOUND4               = 0x0E,         // 3.2
-    TRANSFER_ABORT_REALM_ONLY               = 0x0F,         // All players on party must be from the same realm.
-    TRANSFER_ABORT_MAP_NOT_ALLOWED          = 0x10,         // Map can't be entered at this time.
+    TRANSFER_ABORT_NONE                         = 0x00,
+    TRANSFER_ABORT_ERROR                        = 0x01,
+    TRANSFER_ABORT_MAX_PLAYERS                  = 0x02,     // Transfer Aborted: instance is full
+    TRANSFER_ABORT_NOT_FOUND                    = 0x03,     // Transfer Aborted: instance not found
+    TRANSFER_ABORT_TOO_MANY_INSTANCES           = 0x04,     // You have entered too many instances recently.
+    TRANSFER_ABORT_ZONE_IN_COMBAT               = 0x06,     // Unable to zone in while an encounter is in progress.
+    TRANSFER_ABORT_INSUF_EXPAN_LVL              = 0x07,     // You must have <TBC,WotLK> expansion installed to access this area.
+    TRANSFER_ABORT_DIFFICULTY                   = 0x08,     // <Normal,Heroic,Epic> difficulty mode is not available for %s.
+    TRANSFER_ABORT_UNIQUE_MESSAGE               = 0x09,     // Until you've escaped TLK's grasp, you cannot leave this place!
+    TRANSFER_ABORT_TOO_MANY_REALM_INSTANCES     = 0x0A,     // Additional instances cannot be launched, please try again later.
+    TRANSFER_ABORT_NEED_GROUP                   = 0x0B,     // 3.1
+    TRANSFER_ABORT_NOT_FOUND2                   = 0x0C,     // 3.1
+    TRANSFER_ABORT_NOT_FOUND3                   = 0x0D,     // 3.1
+    TRANSFER_ABORT_NOT_FOUND4                   = 0x0E,     // 3.2
+    TRANSFER_ABORT_REALM_ONLY                   = 0x0F,     // All players on party must be from the same realm.
+    TRANSFER_ABORT_MAP_NOT_ALLOWED              = 0x10,     // Map can't be entered at this time.
 };
 
 enum InstanceResetWarningType
@@ -981,7 +983,7 @@ class MANGOS_DLL_SPEC PlayerTaxi
         void AppendTaximaskTo(ByteBuffer& data, bool all);
 
         // Destinations
-        bool LoadTaxiDestinationsFromString(const std::string& values, uint32 team);
+        bool LoadTaxiDestinationsFromString(const std::string& values, Team team);
         std::string SaveTaxiDestinationsToString();
 
         void ClearTaxiDestinations() { m_TaxiDestinations.clear(); }
@@ -1008,7 +1010,7 @@ std::ostringstream& operator<< (std::ostringstream& ss, PlayerTaxi const& taxi);
 struct BGData
 {
     BGData() : bgInstanceID(0), bgTypeID(BATTLEGROUND_TYPE_NONE), bgAfkReportedCount(0), bgAfkReportedTimer(0),
-        bgTeam(0), mountSpell(0) { ClearTaxiPath(); }
+        bgTeam(TEAM_NONE), mountSpell(0) { ClearTaxiPath(); }
 
 
     uint32 bgInstanceID;                                    ///< This variable is set to bg->m_InstanceID,
@@ -1019,7 +1021,7 @@ struct BGData
     uint8              bgAfkReportedCount;
     time_t             bgAfkReportedTimer;
 
-    uint32 bgTeam;                                          ///< What side the player will be added to
+    Team bgTeam;                                            ///< What side the player will be added to
 
 
     uint32 mountSpell;
@@ -1123,7 +1125,7 @@ class MANGOS_DLL_SPEC Player : public Unit
 
         bool Create( uint32 guidlow, const std::string& name, uint8 race, uint8 class_, uint8 gender, uint8 skin, uint8 face, uint8 hairStyle, uint8 hairColor, uint8 facialHair, uint8 outfitId );
 
-        void Update(uint32 update_diff, uint32 tick_diff);  // overwrite WorldObject::Update 
+        void Update( uint32 time );
 
         static bool BuildEnumData( QueryResult * result,  WorldPacket * p_data );
 
@@ -1212,15 +1214,7 @@ class MANGOS_DLL_SPEC Player : public Unit
         time_t GetTimeInnEnter() const { return time_inn_enter; }
         void UpdateInnerTime (time_t time) { time_inn_enter = time; }
 
-        void RemovePet(Pet* pet, PetSaveMode mode, bool returnreagent = false);
-        void RemoveMiniPet();
-        Pet* GetMiniPet() const;
-        void SetMiniPet(Pet* pet) { m_miniPet = pet->GetGUID(); }
-
-        template<typename Func>
-        void CallForAllControlledUnits(Func const& func, bool withTotems, bool withGuardians, bool withCharms, bool withMiniPet);
-        template<typename Func>
-        bool CheckAllControlledUnits(Func const& func, bool withTotems, bool withGuardians, bool withCharms, bool withMiniPet) const;
+        void RemovePet(PetSaveMode mode);
 
         uint32 GetPhaseMaskForSpawn() const;                // used for proper set phase for DB at GM-mode creature/GO spawn
 
@@ -1236,10 +1230,10 @@ class MANGOS_DLL_SPEC Player : public Unit
 
         void SetVirtualItemSlot( uint8 i, Item* item);
         void SetSheath( SheathState sheathed );             // overwrite Unit version
-        uint8 FindEquipSlot( ItemPrototype const* proto, uint32 slot, bool swap ) const;
-        uint32 GetItemCount( uint32 item, bool inBankAlso = false, Item* skipItem = NULL ) const;
-        uint32 GetItemCountWithLimitCategory(uint32 limitCategory) const;
-        Item* GetItemByGuid(ObjectGuid uint64) const;
+        uint8 FindEquipSlot(ItemPrototype const* proto, uint32 slot, bool swap) const;
+        uint32 GetItemCount(uint32 item, bool inBankAlso = false, Item* skipItem = NULL) const;
+        uint32 GetItemCountWithLimitCategory(uint32 limitCategory, Item* skipItem = NULL) const;
+        Item* GetItemByGuid(ObjectGuid guid) const;
         Item* GetItemByEntry(uint32 item) const;            // only for special cases
         Item* GetItemByLimitedCategory(uint32 limitedCategory) const;
         Item* GetItemByPos( uint16 pos ) const;
@@ -1360,7 +1354,7 @@ class MANGOS_DLL_SPEC Player : public Unit
             return offItem && ((mainItem && mainItem->GetProto()->InventoryType == INVTYPE_2HWEAPON) || offItem->GetProto()->InventoryType == INVTYPE_2HWEAPON);
         }
         void SendNewItem( Item *item, uint32 count, bool received, bool created, bool broadcast = false );
-        bool BuyItemFromVendorSlot(uint64 vendorguid, uint32 vendorslot, uint32 item, uint8 count, uint8 bag, uint8 slot);
+        bool BuyItemFromVendorSlot(ObjectGuid vendorGuid, uint32 vendorslot, uint32 item, uint8 count, uint8 bag, uint8 slot);
 
         float GetReputationPriceDiscount( Creature const* pCreature ) const;
 
@@ -1454,9 +1448,6 @@ class MANGOS_DLL_SPEC Player : public Unit
 
         uint16 FindQuestSlot( uint32 quest_id ) const;
         uint32 GetQuestSlotQuestId(uint16 slot) const { return GetUInt32Value(PLAYER_QUEST_LOG_1_1 + slot * MAX_QUEST_OFFSET + QUEST_ID_OFFSET); }
-        uint32 GetQuestSlotState(uint16 slot)   const { return GetUInt32Value(PLAYER_QUEST_LOG_1_1 + slot * MAX_QUEST_OFFSET + QUEST_STATE_OFFSET); }
-        uint16 GetQuestSlotCounter(uint16 slot, uint8 counter) const { return (uint16)(GetUInt64Value(PLAYER_QUEST_LOG_1_1 + slot * MAX_QUEST_OFFSET + QUEST_COUNTS_OFFSET) >> (counter * 16)); }
-        uint32 GetQuestSlotTime(uint16 slot)    const { return GetUInt32Value(PLAYER_QUEST_LOG_1_1 + slot * MAX_QUEST_OFFSET + QUEST_TIME_OFFSET); }
         void SetQuestSlot(uint16 slot, uint32 quest_id, uint32 timer = 0)
         {
             SetUInt32Value(PLAYER_QUEST_LOG_1_1 + slot * MAX_QUEST_OFFSET + QUEST_ID_OFFSET, quest_id);
@@ -1504,13 +1495,13 @@ class MANGOS_DLL_SPEC Player : public Unit
 
         void SendQuestCompleteEvent(uint32 quest_id);
         void SendQuestReward( Quest const *pQuest, uint32 XP, Object* questGiver );
-        void SendQuestFailed( uint32 quest_id );
+        void SendQuestFailed( uint32 quest_id, InventoryChangeFailure reason = EQUIP_ERR_OK);
         void SendQuestTimerFailed( uint32 quest_id );
         void SendCanTakeQuestResponse( uint32 msg ) const;
         void SendQuestConfirmAccept(Quest const* pQuest, Player* pReceiver);
         void SendPushToPartyResponse( Player *pPlayer, uint32 msg );
         void SendQuestUpdateAddItem( Quest const* pQuest, uint32 item_idx, uint32 count );
-        void SendQuestUpdateAddCreatureOrGo( Quest const* pQuest, ObjectGuid guid, uint32 creatureOrGO_idx, uint32 old_count, uint32 add_count );
+        void SendQuestUpdateAddCreatureOrGo(Quest const* pQuest, ObjectGuid guid, uint32 creatureOrGO_idx, uint32 count);
 
         uint64 GetDivider() { return m_divider; }
         void SetDivider( uint64 guid ) { m_divider = guid; }
@@ -1526,11 +1517,11 @@ class MANGOS_DLL_SPEC Player : public Unit
         /***                   LOAD SYSTEM                     ***/
         /*********************************************************/
 
-        bool LoadFromDB(uint32 guid, SqlQueryHolder *holder);
+        bool LoadFromDB(ObjectGuid guid, SqlQueryHolder *holder);
 
         static uint32 GetZoneIdFromDB(ObjectGuid guid);
         static uint32 GetLevelFromDB(ObjectGuid guid);
-        static bool   LoadPositionFromDB(uint32& mapid, float& x,float& y,float& z,float& o, bool& in_flight, uint64 guid);
+        static bool   LoadPositionFromDB(ObjectGuid guid, uint32& mapid, float& x,float& y,float& z,float& o, bool& in_flight);
 
         /*********************************************************/
         /***                   SAVE SYSTEM                     ***/
@@ -1542,7 +1533,7 @@ class MANGOS_DLL_SPEC Player : public Unit
         static void SetUInt32ValueInArray(Tokens& data,uint16 index, uint32 value);
         static void SetFloatValueInArray(Tokens& data,uint16 index, float value);
         static void Customize(ObjectGuid guid, uint8 gender, uint8 skin, uint8 face, uint8 hairStyle, uint8 hairColor, uint8 facialHair);
-        static void SavePositionInDB(uint32 mapid, float x,float y,float z,float o,uint32 zone,uint64 guid);
+        static void SavePositionInDB(ObjectGuid guid, uint32 mapid, float x,float y,float z,float o,uint32 zone);
 
         static void DeleteFromDB(ObjectGuid playerguid, uint32 accountId, bool updateRealmChars = true, bool deleteFinally = false);
         static void DeleteOldCharacters();
@@ -1774,8 +1765,9 @@ class MANGOS_DLL_SPEC Player : public Unit
         void UpdateZone(uint32 newZone,uint32 newArea);
         void UpdateArea(uint32 newArea);
 
-        void UpdateZoneDependentAuras( uint32 zone_id );    // zones
-        void UpdateAreaDependentAuras( uint32 area_id );    // subzones
+        void UpdateZoneDependentAuras();
+        void UpdateAreaDependentAuras();                    // subzones
+        void UpdateZoneDependentPets();
 
         void UpdateAfkReport(time_t currTime);
         void UpdatePvPFlag(time_t currTime);
@@ -1809,7 +1801,7 @@ class MANGOS_DLL_SPEC Player : public Unit
         uint32 GetGuildId() { return GetUInt32Value(PLAYER_GUILDID);  }
         static uint32 GetGuildIdFromDB(ObjectGuid guid);
         uint32 GetRank(){ return GetUInt32Value(PLAYER_GUILDRANK); }
-        static uint32 GetRankFromDB(uint64 guid);
+        static uint32 GetRankFromDB(ObjectGuid guid);
         int GetGuildIdInvited() { return m_GuildIdInvited; }
         static void RemovePetitionsAndSigns(ObjectGuid guid, uint32 type);
 
@@ -1875,7 +1867,7 @@ class MANGOS_DLL_SPEC Player : public Unit
         float GetSpellCritFromIntellect();
         float OCTRegenHPPerSpirit();
         float OCTRegenMPPerSpirit();
-        float GetRatingCoefficient(CombatRating cr) const;
+        float GetRatingMultiplier(CombatRating cr) const;
         float GetRatingBonusValue(CombatRating cr) const;
         uint32 GetBaseSpellPowerBonus() { return m_baseSpellPower; }
 
@@ -1919,7 +1911,7 @@ class MANGOS_DLL_SPEC Player : public Unit
 
         void SendDungeonDifficulty(bool IsInGroup);
         void SendRaidDifficulty(bool IsInGroup);
-        void ResetInstances(uint8 method, bool isRaid);
+        void ResetInstances(InstanceResetMethod method, bool isRaid);
         void SendResetInstanceSuccess(uint32 MapId);
         void SendResetInstanceFailed(uint32 reason, uint32 MapId);
         void SendResetFailedNotify(uint32 mapid);
@@ -1990,8 +1982,8 @@ class MANGOS_DLL_SPEC Player : public Unit
 
         void CheckAreaExploreAndOutdoor(void);
 
-        static uint32 TeamForRace(uint8 race);
-        uint32 GetTeam() const { return m_team; }
+        static Team TeamForRace(uint8 race);
+        Team GetTeam() const { return m_team; }
         static uint32 getFactionForRace(uint8 race);
         void setFactionForRace(uint8 race);
 
@@ -2189,8 +2181,8 @@ class MANGOS_DLL_SPEC Player : public Unit
         WorldLocation const& GetBattleGroundEntryPoint() const { return m_bgData.joinPos; }
         void SetBattleGroundEntryPoint();
 
-        void SetBGTeam(uint32 team) { m_bgData.bgTeam = team; }
-        uint32 GetBGTeam() const { return m_bgData.bgTeam ? m_bgData.bgTeam : GetTeam(); }
+        void SetBGTeam(Team team) { m_bgData.bgTeam = team; }
+        Team GetBGTeam() const { return m_bgData.bgTeam ? m_bgData.bgTeam : GetTeam(); }
 
         void LeaveBattleground(bool teleportToEntryPoint = true);
         bool CanJoinToBattleground() const;
@@ -2503,7 +2495,7 @@ class MANGOS_DLL_SPEC Player : public Unit
         void outDebugStatsValues() const;
         ObjectGuid m_lootGuid;
 
-        uint32 m_team;
+        Team m_team;
         uint32 m_nextSave;
         time_t m_speakTime;
         uint32 m_speakCount;
@@ -2622,8 +2614,6 @@ class MANGOS_DLL_SPEC Player : public Unit
         Group *m_groupInvite;
         uint32 m_groupUpdateMask;
         uint64 m_auraUpdateMask;
-
-        uint64 m_miniPet;
 
         // Player summoning
         time_t m_summon_expire;
@@ -2760,27 +2750,6 @@ template <class T> T Player::ApplySpellMod(uint32 spellId, SpellModOp op, T &bas
     float diff = (float)basevalue*(float)totalpct/100.0f + (float)totalflat;
     basevalue = T((float)basevalue + diff);
     return T(diff);
-}
-
-template<typename Func>
-void Player::CallForAllControlledUnits(Func const& func, bool withTotems, bool withGuardians, bool withCharms, bool withMiniPet)
-{
-    if (withMiniPet)
-        if(Unit* mini = GetMiniPet())
-            func(mini);
-
-    Unit::CallForAllControlledUnits(func,withTotems,withGuardians,withCharms);
-}
-
-template<typename Func>
-bool Player::CheckAllControlledUnits(Func const& func, bool withTotems, bool withGuardians, bool withCharms, bool withMiniPet) const
-{
-    if (withMiniPet)
-        if(Unit const* mini = GetMiniPet())
-            if (func(mini))
-                return true;
-
-    return Unit::CheckAllControlledUnits(func,withTotems,withGuardians,withCharms);
 }
 
 #endif

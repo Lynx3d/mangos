@@ -77,7 +77,7 @@ void GameObject::RemoveFromWorld()
     if(IsInWorld())
     {
         // Remove GO from owner
-        ObjectGuid owner_guid = GetOwnerGUID();
+        ObjectGuid owner_guid = GetOwnerGuid();
         if (!owner_guid.IsEmpty())
         {
             if (Unit* owner = ObjectAccessor::GetUnit(*this,owner_guid))
@@ -85,7 +85,7 @@ void GameObject::RemoveFromWorld()
             else
             {
                 sLog.outError("Delete %s with SpellId %u LinkedGO %u that lost references to owner %s GO list. Crash possible later.",
-                    GetObjectGuid().GetString().c_str(), m_spellId, GetGOInfo()->GetLinkedGameObjectEntry(), owner_guid.GetString().c_str());
+                    GetGuidStr().c_str(), m_spellId, GetGOInfo()->GetLinkedGameObjectEntry(), owner_guid.GetString().c_str());
             }
         }
 
@@ -159,7 +159,7 @@ bool GameObject::Create(uint32 guidlow, uint32 name_id, Map *map, uint32 phaseMa
     return true;
 }
 
-void GameObject::Update(uint32 /*update_diff*/, uint32 /*tick_diff*/)
+void GameObject::Update(uint32 /*p_time*/)
 {
     if (GetObjectGuid().IsMOTransport())
     {
@@ -392,7 +392,7 @@ void GameObject::Update(uint32 /*update_diff*/, uint32 /*tick_diff*/)
                 //any return here in case battleground traps
             }
 
-            if (GetOwnerGUID())
+            if (!GetOwnerGuid().IsEmpty())
             {
                 if (Unit* owner = GetOwner())
                     owner->RemoveGameObject(this, false);
@@ -667,7 +667,7 @@ bool GameObject::IsTransport() const
 
 Unit* GameObject::GetOwner() const
 {
-    return ObjectAccessor::GetUnit(*this, GetOwnerGUID());
+    return ObjectAccessor::GetUnit(*this, GetOwnerGuid());
 }
 
 void GameObject::SaveRespawnTime()
@@ -819,9 +819,9 @@ void GameObject::SummonLinkedTrapIfAny()
     linkedGO->SetRespawnTime(GetRespawnDelay());
     linkedGO->SetSpellId(GetSpellId());
 
-    if (GetOwnerGUID())
+    if (!GetOwnerGuid().IsEmpty())
     {
-        linkedGO->SetOwnerGUID(GetOwnerGUID());
+        linkedGO->SetOwnerGuid(GetOwnerGuid());
         linkedGO->SetUInt32Value(GAMEOBJECT_LEVEL, GetUInt32Value(GAMEOBJECT_LEVEL));
     }
 
@@ -835,25 +835,29 @@ void GameObject::TriggeringLinkedGameObject( uint32 trapEntry, Unit* target)
         return;
 
     SpellEntry const* trapSpell = sSpellStore.LookupEntry(trapInfo->trap.spellId);
-    if(!trapSpell)                                          // checked at load already
-        return;
 
-    float range = GetSpellMaxRange(sSpellRangeStore.LookupEntry(trapSpell->rangeIndex));
+    // The range to search for linked trap is weird. We set 0.5 as default. Most (all?)
+    // traps are probably expected to be pretty much at the same location as the used GO,
+    // so it appears that using range from spell is obsolete.
+    float range = 0.5f;
+
+    if (trapSpell)                                          // checked at load already
+        range = GetSpellMaxRange(sSpellRangeStore.LookupEntry(trapSpell->rangeIndex));
 
     // search nearest linked GO
     GameObject* trapGO = NULL;
+
     {
-        // using original GO distance
-        MaNGOS::NearestGameObjectEntryInObjectRangeCheck go_check(*target,trapEntry,range);
-        MaNGOS::GameObjectLastSearcher<MaNGOS::NearestGameObjectEntryInObjectRangeCheck> checker(trapGO,go_check);
+        // search closest with base of used GO, using max range of trap spell as search radius (why? See above)
+        MaNGOS::NearestGameObjectEntryInObjectRangeCheck go_check(*this, trapEntry, range);
+        MaNGOS::GameObjectLastSearcher<MaNGOS::NearestGameObjectEntryInObjectRangeCheck> checker(trapGO, go_check);
 
         Cell::VisitGridObjects(this, checker, range);
     }
 
     // found correct GO
-    // FIXME: when GO casting will be implemented trap must cast spell to target
-    if(trapGO)
-        target->CastSpell(target, trapSpell, true, NULL, NULL, GetGUID());
+    if (trapGO)
+        trapGO->Use(target);
 }
 
 GameObject* GameObject::LookupFishingHoleAround(float range)
@@ -980,6 +984,20 @@ void GameObject::Use(Unit* user)
             SetLootState(GO_JUST_DEACTIVATED);
             return;
         }
+        case GAMEOBJECT_TYPE_TRAP:                          // 6
+        {
+            // Currently we do not expect trap code below to be Use()
+            // directly (except from spell effect). Code here will be called by TriggeringLinkedGameObject.
+
+            // FIXME: when GO casting will be implemented trap must cast spell to target
+            if (uint32 spellId = GetGOInfo()->trap.spellId)
+                user->CastSpell(user, spellId, true, NULL, NULL, GetGUID());
+
+            // TODO: all traps can be activated, also those without spell.
+            // Some may have have animation and/or are expected to despawn.
+
+            return;
+        }
         case GAMEOBJECT_TYPE_CHAIR:                         //7 Sitting: Wooden bench, chairs
         {
             GameObjectInfo const* info = GetGOInfo();
@@ -1020,7 +1038,7 @@ void GameObject::Use(Unit* user)
                     Creature* helper = player->SummonCreature(14496, x_i, y_i, GetPositionZ(), GetOrientation(), TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 10000);
                     std::ostringstream output;
                     output << i << ": thisDist: " << thisDistance;
-                    helper->MonsterSay(output.str().c_str(), LANG_UNIVERSAL, 0);
+                    helper->MonsterSay(output.str().c_str(), LANG_UNIVERSAL);
                     */
 
                     if (thisDistance <= lowestDist)
@@ -1152,7 +1170,7 @@ void GameObject::Use(Unit* user)
 
             Player* player = (Player*)user;
 
-            if (player->GetGUID() != GetOwnerGUID())
+            if (player->GetObjectGuid() != GetOwnerGuid())
                 return;
 
             switch(getLootState())
@@ -1184,7 +1202,7 @@ void GameObject::Use(Unit* user)
                     {
                         // prevent removing GO at spell cancel
                         player->RemoveGameObject(this,false);
-                        SetOwnerGUID(player->GetGUID());
+                        SetOwnerGuid(player->GetObjectGuid());
 
                         //fish catched
                         player->UpdateFishingSkill();

@@ -64,7 +64,7 @@ VisibleNotifier::Notify()
         player.m_clientGUIDs.erase(*itr);
 
         DEBUG_FILTER_LOG(LOG_FILTER_VISIBILITY_CHANGES, "%s is out of range (no in active cells set) now for %s",
-            itr->GetString().c_str(), player.GetObjectGuid().GetString().c_str());
+            itr->GetString().c_str(), player.GetGuidStr().c_str());
     }
 
     if (i_data.HasData())
@@ -187,7 +187,9 @@ template<class T> void
 ObjectUpdater::Visit(GridRefManager<T> &m)
 {
     for(typename GridRefManager<T>::iterator iter = m.begin(); iter != m.end(); ++iter)
-        iter->getSource()->Update(i_realdiff, i_diff);
+    {
+        iter->getSource()->Update(i_timeDiff);
+    }
 }
 
 bool CannibalizeObjectCheck::operator()(Corpse* u)
@@ -196,7 +198,7 @@ bool CannibalizeObjectCheck::operator()(Corpse* u)
     if(u->GetType()==CORPSE_BONES)
         return false;
 
-    Player* owner = ObjectAccessor::FindPlayer(u->GetOwnerGUID());
+    Player* owner = ObjectAccessor::FindPlayer(u->GetOwnerGuid());
 
     if( !owner || i_fobj->IsFriendlyTo(owner))
         return false;
