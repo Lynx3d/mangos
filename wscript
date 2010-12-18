@@ -18,6 +18,8 @@ def options(opt):
 		help='use standard malloc instead of TBB')
 	opt.add_option('--with-tools', dest='with_tools', default=False, action='store_true',
 		help='build additional tools in contrib')
+	opt.add_option('--with-sd2', dest='with_sd2', default=False, action='store_true',
+		help='build ScriptDev2 in src/bindings/ScriptDev2; Sources must be available, obviously')
 
 def configure(conf):
 	conf.check_tool('compiler_c')
@@ -29,6 +31,7 @@ def configure(conf):
 	if conf.options.debug:
 		conf.env.append_unique('CXXFLAGS', ['-g'])
 	conf.env['WITH_TOOLS'] = conf.options.with_tools
+	conf.env['WITH_SD2'] = conf.options.with_sd2
 	conf.env.append_value('CONTRIB_DEFINES', ['MMAP_GENERATOR','NO_CORE_FUNCS'])
 	conf.check_cc(lib = 'z', uselib_store='ZLIB', mandatory = True)
 	conf.check_cc(lib = 'pthread', uselib_store='PTHREAD', mandatory = True)
@@ -71,8 +74,10 @@ def build(bld):
 	# generate revision.h
 	#tg = bld.get_tgen_by_name('genrevision')
 	bld(rule = '${bld.bldnode.abspath()}/genrevision -o ${TGT} ${bld.srcnode.abspath()}', target = 'src/shared/revision.h')
-	bld.recurse('src/bindings/universal')
-	#bld.recurse('src/bindings/ScriptDev2')
+	if bld.env.WITH_SD2:
+		bld.recurse('src/bindings/ScriptDev2')
+	else:
+		bld.recurse('src/bindings/universal')
 	bld.recurse('src/shared')
 	bld.recurse('src/framework')
 	bld.recurse('src/game')
