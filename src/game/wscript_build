@@ -113,6 +113,7 @@ mangosgame_src = [
 	'ReactorAI.cpp',
 	'ReputationMgr.cpp',
 	'ScriptCalls.cpp',
+	'ScriptMgr.cpp',
 	'SkillHandler.cpp',
 	'SpellAuras.cpp',
 	'Spell.cpp',
