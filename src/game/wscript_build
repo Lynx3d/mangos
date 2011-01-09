@@ -85,6 +85,7 @@ mangosgame_src = [
 	'Mail.cpp',
 	'Map.cpp',
 	'MapManager.cpp',
+	'MassMailMgr.cpp',
 	'MiscHandler.cpp',
 	'MotionMaster.cpp',
 	'MovementGenerator.cpp',
