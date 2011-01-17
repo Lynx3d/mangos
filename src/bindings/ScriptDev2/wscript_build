@@ -272,6 +272,7 @@ scriptdev2_src = [
 	'scripts/kalimdor/temple_of_ahnqiraj/instance_temple_of_ahnqiraj.cpp',
 	'scripts/kalimdor/temple_of_ahnqiraj/mob_anubisath_sentinel.cpp',
 	'scripts/kalimdor/wailing_caverns/instance_wailing_caverns.cpp',
+	'scripts/kalimdor/wailing_caverns/wailing_caverns.cpp',
 	'scripts/kalimdor/zulfarrak/boss_zumrah.cpp',
 	'scripts/kalimdor/zulfarrak/instance_zulfarrak.cpp',
 	'scripts/kalimdor/zulfarrak/zulfarrak.cpp',
@@ -503,6 +504,7 @@ scriptdev2_src = [
 	'scripts/world/npc_professions.cpp',
 	'scripts/world/npcs_special.cpp',
 	'scripts/world/spell_scripts.cpp',
+	'system/MangosdRev.cpp',
 	'system/ScriptLoader.cpp',
 	'system/system.cpp' ]
 
