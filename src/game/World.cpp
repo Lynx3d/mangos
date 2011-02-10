@@ -57,7 +57,7 @@
 #include "Database/DatabaseImpl.h"
 #include "GridNotifiersImpl.h"
 #include "CellImpl.h"
-#include "InstanceSaveMgr.h"
+#include "MapPersistentStateMgr.h"
 #include "WaypointManager.h"
 #include "GMTicketMgr.h"
 #include "Util.h"
@@ -89,7 +89,6 @@ World::World()
     m_startTime=m_gameTime;
     m_maxActiveSessionCount = 0;
     m_maxQueuedSessionCount = 0;
-    m_resultQueue = NULL;
     m_NextDailyQuestReset = 0;
     m_NextWeeklyQuestReset = 0;
     m_scheduledScripts = 0;
@@ -132,8 +131,6 @@ World::~World()
         delete command;
 
     VMAP::VMapFactory::clear();
-
-    if(m_resultQueue) delete m_resultQueue;
 
     //TODO free addSessQueue
 }
@@ -655,7 +652,7 @@ void World::LoadConfigSettings(bool reload)
         setConfig(CONFIG_UINT32_MAX_OVERSPEED_PINGS, 2);
     }
 
-    setConfig(CONFIG_BOOL_SAVE_RESPAWN_TIME_IMMEDIATLY, "SaveRespawnTimeImmediately", true);
+    setConfig(CONFIG_BOOL_SAVE_RESPAWN_TIME_IMMEDIATELY, "SaveRespawnTimeImmediately", true);
     setConfig(CONFIG_BOOL_WEATHER, "ActivateWeather", true);
 
     setConfig(CONFIG_BOOL_ALWAYS_MAX_SKILL_FOR_LEVEL, "AlwaysMaxSkillForLevel", false);
@@ -934,6 +931,9 @@ void World::SetInitialWorldSettings()
     sLog.outString( "Loading Script Names...");
     sScriptMgr.LoadScriptNames();
 
+    sLog.outString( "Loading WorldTemplate..." );
+    sObjectMgr.LoadWorldTemplate();
+
     sLog.outString( "Loading InstanceTemplate..." );
     sObjectMgr.LoadInstanceTemplate();
 
@@ -942,10 +942,10 @@ void World::SetInitialWorldSettings()
 
     ///- Clean up and pack instances
     sLog.outString( "Cleaning up instances..." );
-    sInstanceSaveMgr.CleanupInstances();                    // must be called before `creature_respawn`/`gameobject_respawn` tables
+    sMapPersistentStateMgr.CleanupInstances();              // must be called before `creature_respawn`/`gameobject_respawn` tables
 
     sLog.outString( "Packing instances..." );
-    sInstanceSaveMgr.PackInstances();
+    sMapPersistentStateMgr.PackInstances();
 
     sLog.outString( "Packing groups..." );
     sObjectMgr.PackGroupIds();                              // must be after CleanupInstances
@@ -1042,13 +1042,13 @@ void World::SetInitialWorldSettings()
     sLog.outString();
 
     sLog.outString( "Loading Creature Respawn Data..." );   // must be after PackInstances()
-    sObjectMgr.LoadCreatureRespawnTimes();
+    sMapPersistentStateMgr.LoadCreatureRespawnTimes();
 
     sLog.outString( "Loading Gameobject Data..." );
     sObjectMgr.LoadGameobjects();
 
     sLog.outString( "Loading Gameobject Respawn Data..." ); // must be after PackInstances()
-    sObjectMgr.LoadGameobjectRespawnTimes();
+    sMapPersistentStateMgr.LoadGameobjectRespawnTimes();
 
     sLog.outString( "Loading Objects Pooling Data...");
     sPoolMgr.LoadFromDB();
@@ -1524,7 +1524,7 @@ void World::Update(uint32 diff)
     sMapMgr.RemoveAllObjectsInRemoveList();
 
     // update the instance reset times
-    sInstanceSaveMgr.Update();
+    sMapPersistentStateMgr.Update();
 
     // And last, but not least handle the issued cli commands
     ProcessCliCommands();
@@ -1938,13 +1938,14 @@ void World::ProcessCliCommands()
 
 void World::InitResultQueue()
 {
-    m_resultQueue = new SqlResultQueue;
-    CharacterDatabase.SetResultQueue(m_resultQueue);
 }
 
 void World::UpdateResultQueue()
 {
-    m_resultQueue->Update();
+    //process async result queues
+    CharacterDatabase.ProcessResultQueue();
+    WorldDatabase.ProcessResultQueue();
+    LoginDatabase.ProcessResultQueue();
 }
 
 void World::UpdateRealmCharCount(uint32 accountId)
@@ -1960,8 +1961,11 @@ void World::_UpdateRealmCharCount(QueryResult *resultCharCount, uint32 accountId
         Field *fields = resultCharCount->Fetch();
         uint32 charCount = fields[0].GetUInt32();
         delete resultCharCount;
+
+        LoginDatabase.BeginTransaction();
         LoginDatabase.PExecute("DELETE FROM realmcharacters WHERE acctid= '%u' AND realmid = '%u'", accountId, realmID);
         LoginDatabase.PExecute("INSERT INTO realmcharacters (numchars, acctid, realmid) VALUES (%u, %u, %u)", charCount, accountId, realmID);
+        LoginDatabase.CommitTransaction();
     }
 }
 
