@@ -149,6 +149,7 @@ mangosgame_src = [
 	'GroupReference.cpp']
 
 mangosgame_inc = [
+	'.',
 	'../..',
 	'../../dep/include',
 	'../framework',
@@ -160,6 +161,8 @@ bld.stlib(source = mangosgame_src,
 	includes = mangosgame_inc,
 	use = ['MYSQL'],
 	install_path = None,
+	pch = 'pchdef_gcc.h',
+	cxxflags = ['-include', 'pchdef_gcc.h', '-Winvalid-pch'],
 	target = 'mangosgame')
 
 bld.add_manual_dependency(

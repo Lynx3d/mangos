@@ -65,6 +65,8 @@ def configure(conf):
 		conf.check_cfg(package='sdl', args='--cflags --libs', mandatory=False)
 
 	conf.write_config_header('config.h')
+	# copy CXXFLAGS so we can add -include directive to CXXFLAGS for sources
+	conf.env['CXXFLAGS_PCH'] = conf.env['CXXFLAGS']
 
 def build(bld):
 	# build genrevision tool first (used by src/shared/wscript_build)

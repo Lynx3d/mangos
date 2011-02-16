@@ -506,6 +506,7 @@ bld.shlib(source = scriptdev2_src,
 	install_path = '${PREFIX}/mangos/lib',
 	pch = 'include/precompiled.h',
 	use = ['ACE', 'MYSQL'],
+	cxxflags = ['-Winvalid-pch'],
 	target = 'mangosscript')
 
 ## magic to include revision data in SD2 version string
