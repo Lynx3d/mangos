@@ -78,8 +78,8 @@ def build(bld):
 	bld(rule = '${bld.bldnode.abspath()}/genrevision -o ${TGT} ${bld.srcnode.abspath()}', target = 'src/shared/revision.h')
 	if bld.env.WITH_SD2:
 		bld.recurse('src/bindings/ScriptDev2')
-	else:
-		bld.recurse('src/bindings/universal')
+	#else:
+	#	bld.recurse('src/bindings/universal')
 	bld.recurse('src/shared')
 	bld.recurse('src/framework')
 	bld.recurse('src/game')
